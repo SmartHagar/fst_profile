@@ -11,6 +11,7 @@ import SocialShare from "@/components/social/SocialShare";
 import BeritaImage from "@/components/pages/berita/BeritaImage";
 import BeritaContent from "@/components/pages/berita/BeritaContent";
 import RandomBeritaSidebar from "@/components/pages/berita/RandomBeritaSidebar";
+import { useBeritaMetaTags } from "@/hooks/useMetaTags";
 import moment from "moment";
 import { User, Calendar } from "lucide-react";
 import { api, BASE_URL } from "@/services/baseURL";
@@ -34,6 +35,9 @@ const BeritaDetailClient = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { setBerita, dataRandomBerita, setRandomBerita } = useBerita();
+
+  // Update meta tags for social sharing and SEO (client-side)
+  useBeritaMetaTags(beritaDetail);
 
   // Parse parameters from URL hash or search params
   const parseUrlParams = () => {
