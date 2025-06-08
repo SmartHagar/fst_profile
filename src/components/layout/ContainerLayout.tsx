@@ -11,7 +11,7 @@ const ContainerLayout = ({ children }: { children: React.ReactNode }) => {
   console.log(pathname);
   return (
     <main className="flex flex-col min-h-screen">
-      {pathname === "/dashboard" ? <BennerEnhanced /> : null}
+      {pathname === "/dashboard/" ? <BennerEnhanced /> : null}
       <Menu />
       <div className="flex-1">{children}</div>
       <div className="flex-shrink-0 mt-8">

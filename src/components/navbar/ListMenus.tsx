@@ -82,11 +82,11 @@ const ListMenu: MenuItem[] = [
     children: [
       {
         name: "Berita",
-        href: "/berita/list",
+        href: "/berita",
       },
       {
         name: "Pengumuman",
-        href: "/pengumuman/list",
+        href: "/pengumuman",
       },
     ],
   },

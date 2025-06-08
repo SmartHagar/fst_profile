@@ -104,6 +104,7 @@ const SocialShare = ({ shareUrl, title }: SocialShareProps) => {
               onClick={button.onClick}
               className={`btn btn-sm btn-circle ${button.bgColor}`}
               aria-label={button.label}
+              title={button.label}
             >
               <IconComponent size={16} />
             </button>
@@ -115,6 +116,7 @@ const SocialShare = ({ shareUrl, title }: SocialShareProps) => {
             onClick={copyToClipboard}
             className="btn btn-sm btn-circle btn-neutral"
             aria-label="Copy link"
+            title="Copy link"
           >
             <LinkIcon size={16} />
           </button>

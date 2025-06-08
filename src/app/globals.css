@@ -96,11 +96,268 @@ body {
   animation: loading 1.5s infinite;
 }
 
+/* Smooth transitions for view mode changes */
+.berita-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover effects for cards */
+.berita-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.berita-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 10px 10px -5px rgb(0 0 0 / 0.04);
+}
+
+/* Grid view specific animations */
+.grid-view .berita-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grid-view .berita-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* List view specific animations */
+.list-view .berita-card:hover {
+  transform: translateX(4px);
+  border-left: 4px solid hsl(var(--primary));
+}
+
+/* Loading animations */
+.skeleton-pulse {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Fade in animation for content */
+.fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered animation for grid items */
+.grid-stagger > * {
+  animation: fade-in 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.grid-stagger > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.grid-stagger > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.grid-stagger > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.grid-stagger > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.grid-stagger > *:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.grid-stagger > *:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+/* View toggle button styles */
+.view-toggle-btn {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.view-toggle-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.view-toggle-btn:hover::before {
+  left: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .berita-card:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+
+  .grid-view .berita-card:hover,
+  .list-view .berita-card:hover {
+    transform: none;
+  }
+}
+
 @keyframes loading {
   0% {
     background-position: 200% 0;
   }
   100% {
     background-position: -200% 0;
+  }
+}
+
+/* berita */
+/* Smooth transitions for view mode changes */
+.berita-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover effects for cards */
+.berita-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.berita-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 10px 10px -5px rgb(0 0 0 / 0.04);
+}
+
+/* Grid view specific animations */
+.grid-view .berita-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grid-view .berita-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* List view specific animations */
+.list-view .berita-card:hover {
+  transform: translateX(4px);
+  border-left: 4px solid hsl(var(--primary));
+}
+
+/* Loading animations */
+.skeleton-pulse {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Fade in animation for content */
+.fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered animation for grid items */
+.grid-stagger > * {
+  animation: fade-in 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.grid-stagger > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.grid-stagger > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.grid-stagger > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.grid-stagger > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.grid-stagger > *:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.grid-stagger > *:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+/* View toggle button styles */
+.view-toggle-btn {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.view-toggle-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.view-toggle-btn:hover::before {
+  left: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .berita-card:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+
+  .grid-view .berita-card:hover,
+  .list-view .berita-card:hover {
+    transform: none;
   }
 }
