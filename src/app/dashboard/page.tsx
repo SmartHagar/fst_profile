@@ -10,7 +10,6 @@ import ReactPlayer from "react-player";
 // import PengumumanModal from "@/components/modals/PengumumanModal";
 
 import Image from "next/image";
-import { Berita } from "@/types";
 import { BASE_URL } from "@/services/baseURL";
 import ImagesCarousel from "@/components/carousel/Images";
 import Pengumuman from "@/components/carousel/Pengumuman";
@@ -132,7 +131,7 @@ const Dashboard: React.FC = () => {
               <div className="font-comic-neue mt-2">
                 <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
                   {dataBerita.data &&
-                    dataBerita.data.map((newsItem: Berita) => (
+                    dataBerita.data.map((newsItem: any) => (
                       <Link
                         key={newsItem.id}
                         href={`/berita/detail/fst-${newsItem.id}/${newsItem.tag}`}

@@ -1,0 +1,14 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/berita/detail/[...slug]/page": "app/berita/detail/[...slug]/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/berita/page": "app/berita/page.js",
+  "/prodi/geologi/page": "app/prodi/geologi/page.js",
+  "/prodi/sistem-informasi/page": "app/prodi/sistem-informasi/page.js",
+  "/profile/lokasi/page": "app/profile/lokasi/page.js",
+  "/profile/pimpinan-fst/page": "app/profile/pimpinan-fst/page.js",
+  "/prodi/biologi/page": "app/prodi/biologi/page.js",
+  "/profile/sejarah-visimisi/page": "app/profile/sejarah-visimisi/page.js"
+}
