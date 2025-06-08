@@ -3,6 +3,7 @@
 // app/berita/detail/page.tsx
 import { Metadata } from "next";
 import BeritaDetailClient from "./BeritaDetailClient";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Detail Berita - Fakultas Sains & Teknologi",
@@ -10,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function BeritaDetailPage() {
-  return <BeritaDetailClient />;
+  return (
+    <Suspense>
+      <BeritaDetailClient />
+    </Suspense>
+  );
 }
