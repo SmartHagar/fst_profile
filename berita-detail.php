@@ -6,7 +6,7 @@
 // Configuration
 $BASE_URL = "https://fstuogp.com"; // Ganti dengan domain Anda
 $API_URL = "https://admin.fstuogp.com";     // Ganti dengan API endpoint Anda
-$APP_URL = "/berita/detail";           // URL aplikasi Next.js Anda
+$APP_URL = "/out/berita/detail";       // URL aplikasi Next.js Anda di folder out
 
 // Get parameters
 $berita_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -103,7 +103,7 @@ if ($berita) {
     $description = "Maaf, berita yang Anda cari tidak ditemukan atau tidak tersedia.";
     $image_url = $BASE_URL . "/images/default-news.jpg";
     $current_url = $BASE_URL . "/berita-detail.php?id=$berita_id&tag=" . urlencode($berita_tag);
-    $app_url = $BASE_URL . "/berita";
+    $app_url = $BASE_URL . "/out/berita";
     $penulis = "Admin";
     $tag = $berita_tag;
     $tgl_terbit = date('Y-m-d');

@@ -12,7 +12,7 @@ export const generateBeritaUrl = (berita: BeritaData): string => {
   const encodedTag = encodeURIComponent(
     berita.tag.toLowerCase().replace(/\s+/g, "-")
   );
-  return `/berita/detail?id=${berita.id}&tag=${encodedTag}`;
+  return `/out/berita/detail?id=${berita.id}&tag=${encodedTag}`;
 };
 
 // Helper function untuk generate PHP sharing URL
@@ -23,10 +23,10 @@ export const generateSharingUrl = (berita: BeritaData): string => {
 
   // Untuk sharing, gunakan URL yang akan di-redirect ke PHP oleh .htaccess
   if (typeof window !== "undefined") {
-    return `${window.location.origin}/berita/detail?id=${berita.id}&tag=${encodedTag}`;
+    return `${window.location.origin}/out/berita/detail?id=${berita.id}&tag=${encodedTag}`;
   }
 
-  return `/berita/detail?id=${berita.id}&tag=${encodedTag}`;
+  return `/out/berita/detail?id=${berita.id}&tag=${encodedTag}`;
 };
 
 // Helper function untuk generate preview URL (untuk testing)
