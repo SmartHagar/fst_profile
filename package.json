@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
-    "serve": "npx serve@latest out"
+    "serve": "npx serve@latest out",
+    "generate-berita": "node scripts/generate-static-berita.js"
   },
   "dependencies": {
     "axios": "^1.7.7",

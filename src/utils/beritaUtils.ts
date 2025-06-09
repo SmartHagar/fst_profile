@@ -7,12 +7,49 @@ interface BeritaData {
   [key: string]: any;
 }
 
-// Helper function untuk generate URL berita dengan query parameters
+// Helper function untuk generate URL berita
 export const generateBeritaUrl = (berita: BeritaData): string => {
   const encodedTag = encodeURIComponent(
     berita.tag.toLowerCase().replace(/\s+/g, "-")
   );
   return `/berita/detail?id=${berita.id}&tag=${encodedTag}`;
+};
+
+// Helper function untuk generate static sharing URL
+export const generateStaticSharingUrl = (berita: BeritaData): string => {
+  const encodedTag = berita.tag.toLowerCase().replace(/\s+/g, "-");
+  return `/static-berita/${berita.id}/${encodedTag}.html`;
+};
+
+// Helper function untuk detect crawler/bot
+export const isCrawlerBot = (): boolean => {
+  if (typeof window === "undefined") return false;
+
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  const crawlers = [
+    "facebookexternalhit",
+    "twitterbot",
+    "whatsapp",
+    "linkedinbot",
+    "googlebot",
+    "bingbot",
+    "slackbot",
+    "telegrambot",
+  ];
+
+  return crawlers.some((crawler) => userAgent.includes(crawler));
+};
+
+// Helper function untuk get sharing URL yang tepat
+export const getSharingUrl = (berita: BeritaData): string => {
+  // Untuk sharing, selalu gunakan static URL
+  if (typeof window !== "undefined") {
+    const baseUrl = window.location.origin;
+    const staticPath = generateStaticSharingUrl(berita);
+    return `${baseUrl}${staticPath}`;
+  }
+
+  return generateStaticSharingUrl(berita);
 };
 
 // Helper function untuk parse URL parameters

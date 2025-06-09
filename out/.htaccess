@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# Redirect dari berita detail ke static pages untuk crawlers
+RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|Twitterbot|WhatsApp|LinkedInBot|Googlebot) [NC]
+RewriteRule ^berita/detail\?id=([0-9]+)&tag=(.*)$ /static-berita/$1/$2.html [R=302,L]
+
+# Fallback untuk browser normal
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.html [L]
