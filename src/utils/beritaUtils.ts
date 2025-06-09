@@ -36,10 +36,10 @@ export const generatePreviewUrl = (berita: BeritaData): string => {
   );
 
   if (typeof window !== "undefined") {
-    return `${window.location.origin}/berita-detail.php?id=${berita.id}&tag=${encodedTag}&preview=1`;
+    return `${BASE_URL}/berita-detail.php?id=${berita.id}&tag=${encodedTag}&preview=1`;
   }
 
-  return `/berita-detail.php?id=${berita.id}&tag=${encodedTag}&preview=1`;
+  return `${BASE_URL}/berita-detail.php?id=${berita.id}&tag=${encodedTag}&preview=1`;
 };
 
 // Helper function untuk detect crawler/bot
