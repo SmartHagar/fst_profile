@@ -1,6 +1,6 @@
 /** @format */
 // src/utils/beritaUtils.ts - Updated untuk PHP integration
-
+const BASE_URL = "https://fstuogp.com";
 interface BeritaData {
   id: number;
   tag: string;
@@ -23,10 +23,10 @@ export const generateSharingUrl = (berita: BeritaData): string => {
 
   // Untuk sharing, gunakan URL yang akan di-redirect ke PHP oleh .htaccess
   if (typeof window !== "undefined") {
-    return `${window.location.origin}/berita/detail?id=${berita.id}&tag=${encodedTag}`;
+    return `${BASE_URL}/berita-detail.php?id=${berita.id}&tag=${encodedTag}`;
   }
 
-  return `/berita/detail?id=${berita.id}&tag=${encodedTag}`;
+  return `${BASE_URL}/berita-detail.php?id=${berita.id}&tag=${encodedTag}`;
 };
 
 // Helper function untuk generate preview URL (untuk testing)
