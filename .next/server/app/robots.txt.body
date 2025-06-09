@@ -1,9 +1,0 @@
-User-Agent: *
-Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
-
-Host: https://admin.fstuogp.com
-Sitemap: https://admin.fstuogp.com/sitemap.xml
