@@ -4,7 +4,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { motion } from "framer-motion";
 import useBerita from "@/stores/berita";
 import BeritaCard from "@/components/pages/berita/BeritaCard";
 import RandomBeritaSidebar from "@/components/pages/berita/RandomBeritaSidebar";
@@ -43,12 +42,7 @@ const ListBeritaClient = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <motion.div
-        initial={{ x: 300, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: -300, opacity: 0 }}
-        className="flex flex-wrap lg:flex-nowrap gap-8"
-      >
+      <div className="flex flex-wrap lg:flex-nowrap gap-8">
         <main className="flex-1">
           {/* Header Section */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
@@ -105,11 +99,8 @@ const ListBeritaClient = () => {
               <p className="mt-4 text-base-content/70">Memuat berita...</p>
             </div>
           ) : (
-            <motion.div
+            <div
               key={viewMode} // Re-animate when view changes
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
             >
               <BeritaCard
                 dataCard={dataBerita}
@@ -117,7 +108,7 @@ const ListBeritaClient = () => {
                 baseUrl={BASE_URL}
                 viewMode={viewMode}
               />
-            </motion.div>
+            </div>
           )}
 
           {/* Empty State */}
@@ -138,7 +129,7 @@ const ListBeritaClient = () => {
         <aside className="w-full lg:w-80">
           <RandomBeritaSidebar dataRandomBerita={dataRandomBerita} />
         </aside>
-      </motion.div>
+      </div>
     </div>
   );
 };

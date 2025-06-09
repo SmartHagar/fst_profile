@@ -1,151 +1,151 @@
 {
   "pages": {
     "/_not-found/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/_not-found/page-708ad68774a419f8.js"
+      "static/chunks/app/_not-found/page-24fe301ee4778151.js"
     ],
     "/layout": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
       "static/css/275ed64cc4367444.css",
       "static/css/4f15bbb1cab7064d.css",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/331-98cdec72bad78288.js",
-      "static/chunks/app/layout-694998c35fc7d1e8.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/331-33750830c2943e34.js",
+      "static/chunks/app/layout-31072ed028b63a15.js"
     ],
     "/dashboard/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
       "static/css/e1e9777c166e291f.css",
       "static/chunks/13b76428-dd7517559418935c.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/957-c1a5d919a159e95f.js",
-      "static/chunks/454-d708b2b353c45bcf.js",
-      "static/chunks/app/dashboard/page-d41b8e3ce42ed453.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/356-2a684cd460eeb0d4.js",
+      "static/chunks/454-c60b679a0f1f9945.js",
+      "static/chunks/app/dashboard/page-31b6d1d9b7ea1790.js"
     ],
     "/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
       "static/chunks/app/page-0a8b9a7b052e6eac.js"
     ],
     "/berita/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
       "static/chunks/13b76428-dd7517559418935c.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/957-c1a5d919a159e95f.js",
-      "static/chunks/app/berita/page-e46984d5afc8c31b.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/356-2a684cd460eeb0d4.js",
+      "static/chunks/app/berita/page-b3206ec2fe906cda.js"
     ],
     "/prodi/biologi/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/prodi/biologi/page-89269e3493fa0b67.js"
+      "static/chunks/app/prodi/biologi/page-a918bf39911df5ae.js"
     ],
     "/prodi/biologi/layout": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/app/prodi/biologi/layout-8caa9a14864d032f.js"
-    ],
-    "/profile/lokasi/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/profile/lokasi/page-374363de13f12f75.js"
-    ],
-    "/profile/lokasi/layout": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/app/profile/lokasi/layout-d152dc1fe2bce066.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/prodi/biologi/layout-7fa6965423d2a74f.js"
     ],
     "/prodi/sistem-informasi/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/prodi/sistem-informasi/page-3231a26bc47e4054.js"
+      "static/chunks/app/prodi/sistem-informasi/page-cfbb50bcb8511e47.js"
     ],
     "/prodi/sistem-informasi/layout": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/app/prodi/sistem-informasi/layout-a10e92727aa264c1.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/prodi/sistem-informasi/layout-1ded7682571d477d.js"
     ],
     "/prodi/geologi/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/prodi/geologi/page-36631bede13fc78d.js"
+      "static/chunks/app/prodi/geologi/page-a80eb7d3d8dfdcd0.js"
     ],
     "/prodi/geologi/layout": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/app/prodi/geologi/layout-840145f1741acb92.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/prodi/geologi/layout-4e6b96308c7e021f.js"
+    ],
+    "/profile/lokasi/page": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/app/profile/lokasi/page-db38e1895bf2efe9.js"
+    ],
+    "/profile/lokasi/layout": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/profile/lokasi/layout-13e65711d9547915.js"
     ],
     "/profile/pimpinan-fst/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/app/profile/pimpinan-fst/page-67c68acc4997971a.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/app/profile/pimpinan-fst/page-9b71cc0cfa8d602e.js"
     ],
     "/profile/pimpinan-fst/layout": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/app/profile/pimpinan-fst/layout-1700cfa035753a2f.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/profile/pimpinan-fst/layout-c467fcfbd0a70260.js"
     ],
     "/profile/sejarah-visimisi/page": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/profile/sejarah-visimisi/page-d30a1c89306314db.js"
+      "static/chunks/app/profile/sejarah-visimisi/page-0e6eb3f10de56f73.js"
     ],
     "/profile/sejarah-visimisi/layout": [
-      "static/chunks/webpack-379f5c39ab2ba443.js",
-      "static/chunks/fd9d1056-1ab42b721d48340e.js",
-      "static/chunks/117-50c3fbb0c37705e3.js",
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-7165b262f28ab2db.js",
-      "static/chunks/648-3e69835b5b4fb7a7.js",
-      "static/chunks/app/profile/sejarah-visimisi/layout-61e674c15947b0fb.js"
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/profile/sejarah-visimisi/layout-826d13e8b2feb64c.js"
     ]
   }
 }

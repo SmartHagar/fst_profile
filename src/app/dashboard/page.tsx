@@ -3,7 +3,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 
@@ -28,12 +27,7 @@ const Dashboard: React.FC = () => {
   }, [setVideoUtama, setBerita]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1 }}
-    >
+    <main>
       <section>
         <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-4 lg:row-span-2">
           <>
@@ -158,7 +152,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </section>
-    </motion.div>
+    </main>
   );
 };
 
