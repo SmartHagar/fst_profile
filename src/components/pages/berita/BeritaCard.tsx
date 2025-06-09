@@ -8,6 +8,7 @@ import BeritaLoading from "@/components/loading/BeritaLoading";
 import { User, Calendar, Clock, Tag as TagIcon } from "lucide-react";
 import moment from "moment";
 import "moment/locale/id";
+import { generateBeritaUrl } from "@/utils/beritaUtils";
 
 moment.locale("id");
 
@@ -40,15 +41,6 @@ const BeritaCard = ({
     return <BeritaLoading viewMode={viewMode} />;
   }
 
-  // Helper function untuk create URL dengan Dynamic Routes
-  const createBeritaUrl = (row: BeritaData) => {
-    // Encode tag untuk handle special characters dan spaces
-    const encodedTag = encodeURIComponent(
-      row.tag.toLowerCase().replace(/\s+/g, "-")
-    );
-    return `/berita/detail/${row.id}/${encodedTag}`;
-  };
-
   // Helper function untuk strip HTML dan limit text
   const getPreviewText = (html: string, limit: number) => {
     const text = html.replace(/<[^>]*>?/gm, "");
@@ -75,7 +67,7 @@ const BeritaCard = ({
               <div className="flex items-start space-x-4">
                 {!random && (
                   <div className="shrink-0">
-                    <Link href={createBeritaUrl(row)}>
+                    <Link href={generateBeritaUrl(row)}>
                       <BeritaImage
                         src={`${baseUrl}/storage/${gambar_berita}`}
                         alt={judul}
@@ -99,7 +91,7 @@ const BeritaCard = ({
                   {/* Title */}
                   <h3 className="card-title text-base lg:text-lg line-clamp-2 mb-2">
                     <Link
-                      href={createBeritaUrl(row)}
+                      href={generateBeritaUrl(row)}
                       className="link link-hover hover:text-primary transition-colors"
                     >
                       {!random ? judul : judul.substring(0, 50) + "..."}
@@ -139,7 +131,7 @@ const BeritaCard = ({
                   {!random && (
                     <div className="mt-3">
                       <Link
-                        href={createBeritaUrl(row)}
+                        href={generateBeritaUrl(row)}
                         className="btn btn-primary btn-sm"
                       >
                         Baca Selengkapnya
@@ -167,7 +159,7 @@ const BeritaCard = ({
             className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group"
           >
             <figure className="relative overflow-hidden">
-              <Link href={createBeritaUrl(row)}>
+              <Link href={generateBeritaUrl(row)}>
                 <BeritaImage
                   src={`${baseUrl}/storage/${gambar_berita}`}
                   alt={judul}
@@ -199,7 +191,7 @@ const BeritaCard = ({
               {/* Title */}
               <h3 className="card-title text-sm lg:text-base line-clamp-2 min-h-[2.5rem]">
                 <Link
-                  href={createBeritaUrl(row)}
+                  href={generateBeritaUrl(row)}
                   className="link link-hover hover:text-primary transition-colors"
                 >
                   {judul}
@@ -227,7 +219,7 @@ const BeritaCard = ({
                 </div>
 
                 <Link
-                  href={createBeritaUrl(row)}
+                  href={generateBeritaUrl(row)}
                   className="btn btn-primary btn-xs shrink-0"
                 >
                   Baca

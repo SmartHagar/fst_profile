@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "NODE_OPTIONS='--max-old-space-size=256' next build",
-    "start": "node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "serve": "npx serve@latest out"
   },

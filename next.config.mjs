@@ -5,7 +5,10 @@
 
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false, // Disable SWC untuk mengurangi memory usage
+  output: "export", // Export sebagai static files
+  distDir: "out",
+  trailingSlash: true,
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -15,7 +18,14 @@ const nextConfig = {
       },
     ],
   },
-  trailingSlash: true,
+  // Disable features yang membutuhkan server
+  experimental: {
+    appDir: false,
+  },
+  // Optimasi untuk shared hosting
+  compress: false,
+  poweredByHeader: false,
+  generateEtags: false,
 };
 
 export default nextConfig;
