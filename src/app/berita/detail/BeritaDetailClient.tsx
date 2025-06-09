@@ -1,17 +1,16 @@
 /** @format */
 
-// app/berita/detail/BeritaDetailClient.tsx
+// BeritaDetailClient.tsx (Updated untuk Static)
 "use client";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useBerita from "@/stores/berita";
 import SocialShare from "@/components/social/SocialShare";
 import BeritaImage from "@/components/pages/berita/BeritaImage";
 import BeritaContent from "@/components/pages/berita/BeritaContent";
 import RandomBeritaSidebar from "@/components/pages/berita/RandomBeritaSidebar";
-import { useBeritaMetaTags } from "@/hooks/useMetaTags";
 import moment from "moment";
 import { User, Calendar } from "lucide-react";
 import { api, BASE_URL } from "@/services/baseURL";
@@ -26,40 +25,54 @@ interface BeritaDetail {
   tanggal: string;
 }
 
-const BeritaDetailClient = () => {
+interface BeritaDetailClientProps {
+  params?: {
+    id: string;
+    tag: string;
+  };
+  staticData?: BeritaDetail | null; // Support untuk static data
+}
+
+const BeritaDetailClient = ({
+  params,
+  staticData,
+}: BeritaDetailClientProps) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [shareUrl, setShareUrl] = useState("");
-  const [beritaDetail, setBeritaDetail] = useState<BeritaDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [beritaDetail, setBeritaDetail] = useState<BeritaDetail | null>(
+    staticData || null
+  );
+  const [loading, setLoading] = useState(!staticData); // Tidak loading jika ada static data
   const [error, setError] = useState<string | null>(null);
 
   const { setBerita, dataRandomBerita, setRandomBerita } = useBerita();
 
-  // Update meta tags for social sharing and SEO (client-side)
-  useBeritaMetaTags(beritaDetail);
-
-  // Parse parameters from URL hash or search params
+  // Parse parameters
   const parseUrlParams = () => {
-    // Method 1: Using search params (?id=123&tag=example)
-    const id = searchParams.get("id");
-    const tag = searchParams.get("tag");
-
-    if (id && tag) {
-      return { id, tag };
+    // Method 1: Dynamic routes params
+    if (params?.id && params?.tag) {
+      return { id: params.id, tag: params.tag };
     }
 
-    // Method 2: Parse from hash (#fst-123/example)
+    // Method 2: Search params (fallback)
     if (typeof window !== "undefined") {
-      const hash = window.location.hash.slice(1); // Remove #
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get("id");
+      const tag = urlParams.get("tag");
+
+      if (id && tag) {
+        return { id, tag };
+      }
+
+      // Method 3: Hash params (legacy support)
+      const hash = window.location.hash.slice(1);
       const parts = hash.split("/");
 
       if (parts.length >= 2) {
         const idPart = parts[0];
         const tagPart = parts[1];
-
-        // Extract ID from format like "fst-123"
         const idMatch = idPart.match(/fst-(\d+)/);
+
         if (idMatch) {
           return { id: idMatch[1], tag: tagPart };
         }
@@ -69,7 +82,7 @@ const BeritaDetailClient = () => {
     return null;
   };
 
-  // Fetch berita detail
+  // Fetch berita detail (fallback jika tidak ada static data)
   const fetchBeritaDetail = async (id: string, tag: string) => {
     try {
       setLoading(true);
@@ -79,11 +92,6 @@ const BeritaDetailClient = () => {
 
       if (response.data) {
         setBeritaDetail(response.data);
-
-        // Update page title dynamically
-        if (typeof window !== "undefined") {
-          document.title = `${response.data.judul} - Fakultas Sains & Teknologi`;
-        }
       } else {
         setError("Berita tidak ditemukan");
       }
@@ -96,16 +104,23 @@ const BeritaDetailClient = () => {
   };
 
   useEffect(() => {
-    const params = parseUrlParams();
+    // Jika sudah ada static data, skip fetch
+    if (staticData) {
+      setLoading(false);
+      return;
+    }
 
-    if (!params) {
+    // Jika tidak ada static data, fetch dari API
+    const urlParams = parseUrlParams();
+
+    if (!urlParams) {
       setError("Parameter URL tidak valid");
       setLoading(false);
       return;
     }
 
-    fetchBeritaDetail(params.id, params.tag);
-  }, [searchParams]);
+    fetchBeritaDetail(urlParams.id, urlParams.tag);
+  }, [params, staticData]);
 
   useEffect(() => {
     setBerita();

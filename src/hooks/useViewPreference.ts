@@ -1,36 +1,44 @@
 /** @format */
 
 // hooks/useViewPreference.ts
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 type ViewMode = "list" | "grid";
 
 interface UseViewPreferenceReturn {
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
-  toggleView: () => void;
-  isListView: boolean;
-  isGridView: boolean;
 }
 
 export const useViewPreference = (
-  defaultView: ViewMode = "list"
+  defaultMode: ViewMode = "list"
 ): UseViewPreferenceReturn => {
-  const [viewMode, setViewModeState] = useState<ViewMode>(defaultView);
+  const [viewMode, setViewModeState] = useState<ViewMode>(defaultMode);
 
-  const setViewMode = useCallback((mode: ViewMode) => {
+  // Load saved preference on mount
+  useEffect(() => {
+    try {
+      const savedMode = localStorage.getItem("viewPreference");
+      if (savedMode && (savedMode === "list" || savedMode === "grid")) {
+        setViewModeState(savedMode as ViewMode);
+      }
+    } catch (error) {
+      console.warn("Failed to load view preference from localStorage:", error);
+    }
+  }, []);
+
+  // Save preference when it changes
+  const setViewMode = (mode: ViewMode) => {
     setViewModeState(mode);
-  }, []);
-
-  const toggleView = useCallback(() => {
-    setViewModeState((prev) => (prev === "list" ? "grid" : "list"));
-  }, []);
+    try {
+      localStorage.setItem("viewPreference", mode);
+    } catch (error) {
+      console.warn("Failed to save view preference to localStorage:", error);
+    }
+  };
 
   return {
     viewMode,
     setViewMode,
-    toggleView,
-    isListView: viewMode === "list",
-    isGridView: viewMode === "grid",
   };
 };
