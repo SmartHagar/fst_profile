@@ -64,7 +64,56 @@
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
       "static/chunks/145-9503ac603063e498.js",
       "static/chunks/648-d15b7ccf886066e4.js",
-      "static/chunks/app/prodi/biologi/layout-7fa6965423d2a74f.js"
+      "static/chunks/app/prodi/biologi/layout-dab6656426290656.js"
+    ],
+    "/prodi/geologi/page": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/app/prodi/geologi/page-a80eb7d3d8dfdcd0.js"
+    ],
+    "/prodi/geologi/layout": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/prodi/geologi/layout-9154bb724e101cee.js"
+    ],
+    "/profile/lokasi/page": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/app/profile/lokasi/page-db38e1895bf2efe9.js"
+    ],
+    "/profile/lokasi/layout": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/profile/lokasi/layout-b38caa739dd0de85.js"
+    ],
+    "/profile/pimpinan-fst/page": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/app/profile/pimpinan-fst/page-9b71cc0cfa8d602e.js"
+    ],
+    "/profile/pimpinan-fst/layout": [
+      "static/chunks/webpack-98e5b79682554d62.js",
+      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
+      "static/chunks/117-cf8aed4ec982f1e3.js",
+      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
+      "static/chunks/145-9503ac603063e498.js",
+      "static/chunks/648-d15b7ccf886066e4.js",
+      "static/chunks/app/profile/pimpinan-fst/layout-c9f300cd48cc6716.js"
     ],
     "/prodi/sistem-informasi/page": [
       "static/chunks/webpack-98e5b79682554d62.js",
@@ -82,55 +131,6 @@
       "static/chunks/648-d15b7ccf886066e4.js",
       "static/chunks/app/prodi/sistem-informasi/layout-1ded7682571d477d.js"
     ],
-    "/prodi/geologi/page": [
-      "static/chunks/webpack-98e5b79682554d62.js",
-      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
-      "static/chunks/117-cf8aed4ec982f1e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/prodi/geologi/page-a80eb7d3d8dfdcd0.js"
-    ],
-    "/prodi/geologi/layout": [
-      "static/chunks/webpack-98e5b79682554d62.js",
-      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
-      "static/chunks/117-cf8aed4ec982f1e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-9503ac603063e498.js",
-      "static/chunks/648-d15b7ccf886066e4.js",
-      "static/chunks/app/prodi/geologi/layout-4e6b96308c7e021f.js"
-    ],
-    "/profile/lokasi/page": [
-      "static/chunks/webpack-98e5b79682554d62.js",
-      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
-      "static/chunks/117-cf8aed4ec982f1e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/app/profile/lokasi/page-db38e1895bf2efe9.js"
-    ],
-    "/profile/lokasi/layout": [
-      "static/chunks/webpack-98e5b79682554d62.js",
-      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
-      "static/chunks/117-cf8aed4ec982f1e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-9503ac603063e498.js",
-      "static/chunks/648-d15b7ccf886066e4.js",
-      "static/chunks/app/profile/lokasi/layout-13e65711d9547915.js"
-    ],
-    "/profile/pimpinan-fst/page": [
-      "static/chunks/webpack-98e5b79682554d62.js",
-      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
-      "static/chunks/117-cf8aed4ec982f1e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-9503ac603063e498.js",
-      "static/chunks/app/profile/pimpinan-fst/page-9b71cc0cfa8d602e.js"
-    ],
-    "/profile/pimpinan-fst/layout": [
-      "static/chunks/webpack-98e5b79682554d62.js",
-      "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
-      "static/chunks/117-cf8aed4ec982f1e3.js",
-      "static/chunks/main-app-643cbe9f2f6bdf3d.js",
-      "static/chunks/145-9503ac603063e498.js",
-      "static/chunks/648-d15b7ccf886066e4.js",
-      "static/chunks/app/profile/pimpinan-fst/layout-c467fcfbd0a70260.js"
-    ],
     "/profile/sejarah-visimisi/page": [
       "static/chunks/webpack-98e5b79682554d62.js",
       "static/chunks/fd9d1056-032eb4d1c2c29cfa.js",
@@ -145,7 +145,7 @@
       "static/chunks/main-app-643cbe9f2f6bdf3d.js",
       "static/chunks/145-9503ac603063e498.js",
       "static/chunks/648-d15b7ccf886066e4.js",
-      "static/chunks/app/profile/sejarah-visimisi/layout-826d13e8b2feb64c.js"
+      "static/chunks/app/profile/sejarah-visimisi/layout-d3cf7d38d5ddc641.js"
     ]
   }
 }
