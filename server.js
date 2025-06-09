@@ -1,154 +1,115 @@
 /** @format */
 
-// ultra-minimal-server.js - Absolute minimal Next.js server
+// minimal-server.js - Ultra lightweight Next.js server
 const { createServer } = require("http");
 const { parse } = require("url");
-const { join } = require("path");
 
-// Set extreme memory limits
+// Set aggressive memory limits
 process.env.NODE_OPTIONS =
-  "--max-old-space-size=128 --optimize-for-size --gc-interval=50 --no-experimental-fetch";
+  "--max-old-space-size=256 --optimize-for-size --gc-interval=100";
 
-// Disable all non-essential features
-process.env.DISABLE_SWC = "true";
-process.env.NEXT_TELEMETRY_DISABLED = "1";
-
-// Force garbage collection very frequently
+// Force garbage collection more frequently
 if (global.gc) {
   setInterval(() => {
     global.gc();
-  }, 15000); // Every 15 seconds
+  }, 30000); // Every 30 seconds
 }
 
 const next = require("next");
 
-const dev = false;
+const dev = false; // Always production for shared hosting
 const hostname = "localhost";
 const port = process.env.PORT || 8080;
 
-// Ultra minimal Next.js configuration
+// Minimal Next.js configuration
 const app = next({
   dev: false,
   hostname,
   port,
-  dir: process.cwd(),
-  quiet: true, // Reduce logging
   conf: {
-    // Disable everything possible
+    // Disable memory-heavy features
     swcMinify: false,
-    compress: false,
+    compress: false, // Let server handle compression
     poweredByHeader: false,
     generateEtags: false,
-    distDir: ".next",
-
-    // Disable experimental features
     experimental: {
-      forceSwcTransforms: false,
       workerThreads: false,
       cpus: 1,
-      isrMemoryCacheSize: 0,
-      largePageDataBytes: 64 * 1000, // 64KB limit
+      isrMemoryCacheSize: 0, // Disable ISR cache
     },
-
     // Minimal image config
     images: {
       unoptimized: true,
-      domains: [],
-      formats: [],
     },
-
-    // Minimal webpack config
-    webpack: null, // Use default minimal webpack
-
-    // Disable dev features completely
+    // Disable dev features
     onDemandEntries: {
-      maxInactiveAge: 5 * 1000, // 5 seconds
-      pagesBufferLength: 1, // Only keep 1 page in memory
+      maxInactiveAge: 15 * 1000,
+      pagesBufferLength: 2,
     },
   },
 });
 
 const handle = app.getRequestHandler();
 
-// Minimal memory monitoring
-const logMemory = () => {
+// Memory monitoring
+const logMemoryUsage = () => {
   const used = process.memoryUsage();
   const rss = Math.round((used.rss / 1024 / 1024) * 100) / 100;
-  console.log(`Memory: ${rss}MB`);
+  const heapUsed = Math.round((used.heapUsed / 1024 / 1024) * 100) / 100;
+  console.log(`Memory: RSS ${rss}MB, Heap ${heapUsed}MB`);
 
-  // Aggressive GC
-  if (rss > 150 && global.gc) {
+  // Force GC if memory usage is high
+  if (rss > 200 && global.gc) {
+    console.log("Forcing garbage collection...");
     global.gc();
   }
 };
 
-console.log("Starting ultra minimal server...");
-
-// Error handling
-process.on("uncaughtException", (err) => {
-  console.error("Uncaught Exception:", err.message);
-  // Don't exit, try to continue
-});
-
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection:", reason);
-  // Don't exit, try to continue
-});
+console.log("Starting minimal Next.js server...");
 
 app
   .prepare()
   .then(() => {
     const server = createServer(async (req, res) => {
       try {
-        // Parse URL with minimal options
         const parsedUrl = parse(req.url, true);
 
-        // Set minimal headers
+        // Basic security headers
         res.setHeader("X-Frame-Options", "DENY");
+        res.setHeader("X-Content-Type-Options", "nosniff");
 
         await handle(req, res, parsedUrl);
       } catch (err) {
-        console.error("Request error:", err.message);
+        console.error("Error handling request:", err.message);
         res.statusCode = 500;
-        res.end("Error");
+        res.end("Internal Server Error");
       }
     });
 
-    // Minimal server config
-    server.timeout = 20000; // 20 seconds
-    server.keepAliveTimeout = 5000; // 5 seconds
-    server.maxConnections = 10; // Limit connections
+    // Set server timeout
+    server.timeout = 30000; // 30 seconds
 
     server.listen(port, (err) => {
       if (err) {
-        console.error("Server failed:", err.message);
+        console.error("Failed to start server:", err);
         process.exit(1);
       }
-      console.log(`Server ready on port ${port}`);
-      logMemory();
+      console.log(`✓ Server ready on http://${hostname}:${port}`);
+      logMemoryUsage();
     });
 
-    // Memory monitoring every 30 seconds
-    setInterval(logMemory, 30000);
+    // Monitor memory usage
+    setInterval(logMemoryUsage, 60000); // Every minute
 
     // Graceful shutdown
     process.on("SIGTERM", () => {
-      server.close(() => process.exit(0));
+      console.log("SIGTERM received, shutting down gracefully");
+      server.close(() => {
+        process.exit(0);
+      });
     });
   })
   .catch((ex) => {
-    console.error("App failed:", ex.message);
-
-    // Try to start a basic static server as fallback
-    console.log("Attempting fallback static server...");
-    const staticServer = createServer((req, res) => {
-      res.writeHead(503, { "Content-Type": "text/html" });
-      res.end(
-        "<h1>Service Temporarily Unavailable</h1><p>Please try again later.</p>"
-      );
-    });
-
-    staticServer.listen(port, () => {
-      console.log(`Fallback server on port ${port}`);
-    });
+    console.error("Failed to prepare Next.js app:", ex.message);
+    process.exit(1);
   });

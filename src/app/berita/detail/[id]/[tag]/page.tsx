@@ -174,25 +174,6 @@ export async function generateMetadata({
   };
 }
 
-// Generate static params untuk ISR (optional)
-export async function generateStaticParams() {
-  try {
-    // Fetch popular atau recent berita untuk pre-generate
-    const response = await fetch(`${BASE_URL}/api/berita?limit=50`);
-    const data = await response.json();
-
-    if (!data?.data) return [];
-
-    return data.data.map((berita: BeritaDetail) => ({
-      id: berita.id.toString(),
-      tag: berita.tag,
-    }));
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    return [];
-  }
-}
-
 // Main page component
 export default async function BeritaDetailPage({ params }: PageProps) {
   const { id, tag } = params;
