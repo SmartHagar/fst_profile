@@ -1,5 +1,5 @@
 /** @format */
-
+// detail/[id]/[tag]/BeritaDetailClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";

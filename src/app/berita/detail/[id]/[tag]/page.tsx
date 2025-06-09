@@ -1,5 +1,5 @@
 /** @format */
-
+// detail/[id]/[tag]/page.tsx
 import { Metadata } from "next";
 import BeritaDetailClient from "./BeritaDetailClient";
 import { Suspense } from "react";
