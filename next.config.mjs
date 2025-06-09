@@ -4,23 +4,19 @@
  */
 
 const nextConfig = {
-  output: "export",
-  trailingSlash: true,
-  basePath: "/out",
-  assetPrefix: "/out",
+  reactStrictMode: true,
+  swcMinify: true,
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
-  env: {
-    CUSTOM_BASE_PATH: "/out",
-  },
-  // Skip build-time optimizations untuk static export
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  trailingSlash: true,
+  output: "export",
 };
 
 export default nextConfig;
