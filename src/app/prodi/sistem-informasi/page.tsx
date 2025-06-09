@@ -32,7 +32,7 @@ const BiologiPage = () => {
           Unggul dan berkarakter Kristen”
         </p>
         <h2 className="text-center mb-3 mt-8 font-bold text-xl">Misi</h2>
-        <div className="text-justify leading-6 text-lg">
+        <div className="text-justify leading-6 text-lg ml-4">
           <ol className="list-decimal">
             <li className="mb-2">
               Menyelenggarakan Pendidikan dan pengajaran yang bermutu dengan

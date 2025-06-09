@@ -1,20 +1,33 @@
 /** @format */
-
+"use client";
 // app/berita/page.tsx
-import { Metadata } from "next";
+import { useBanner } from "@/context/BannerContext";
 import ListBeritaClient from "./ListBeritaClient";
-
-export const metadata: Metadata = {
-  title: "Berita Fakultas Sains & Teknologi",
-  description: "Kumpulan berita terbaru dari Fakultas Sains & Teknologi",
-  keywords: "berita, fakultas, sains, teknologi, universitas",
-  openGraph: {
-    title: "Berita Fakultas Sains & Teknologi",
-    description: "Kumpulan berita terbaru dari Fakultas Sains & Teknologi",
-    type: "website",
-  },
-};
+import { useEffect } from "react";
 
 export default function ListBerita() {
+  const { setBannerConfig } = useBanner();
+
+  useEffect(() => {
+    // Set banner config untuk halaman ini
+    setBannerConfig({
+      type: "minimal",
+      title: "Berita Fakultas Sains & Teknologi ",
+      breadcrumbs: [
+        {
+          label: "Berita & Pengumuman",
+          href: "/",
+        },
+        {
+          label: "Berita",
+        },
+      ],
+      show: true,
+    });
+
+    return () => {
+      setBannerConfig(null);
+    };
+  }, [setBannerConfig]);
   return <ListBeritaClient />;
 }

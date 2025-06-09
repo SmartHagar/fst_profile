@@ -5,10 +5,8 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
-    "lint": "next lint",
-    "serve": "npx serve@latest out",
-    "generate-berita": "node scripts/generate-static-berita.js"
+    "start": "npx serve@latest out",
+    "lint": "next lint"
   },
   "dependencies": {
     "axios": "^1.7.7",

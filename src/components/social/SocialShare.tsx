@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { generateSocialUrls, testSocialSharing } from "@/utils/beritaUtils";
+import { Facebook, Linkedin, MessageCircle, PlaneIcon } from "lucide-react";
 
 interface SocialShareProps {
   title: string;
@@ -127,8 +128,10 @@ const SocialShare = ({
           className="btn btn-sm btn-ghost hover:btn-primary hover:text-white"
           title="Bagikan ke Facebook"
         >
-          <span className="text-blue-600">📘</span>
-          Facebook
+          <span className="text-blue-600">
+            <Facebook className="w-4 h-4" />
+          </span>
+          <span className="hidden md:inline">Facebook</span>
         </button>
 
         {/* Twitter */}
@@ -138,7 +141,7 @@ const SocialShare = ({
           title="Bagikan ke Twitter"
         >
           <span className="text-sky-500">🐦</span>
-          Twitter
+          <span className="hidden md:inline">Twitter</span>
         </button>
 
         {/* WhatsApp */}
@@ -147,8 +150,10 @@ const SocialShare = ({
           className="btn btn-sm btn-ghost hover:btn-success hover:text-white"
           title="Bagikan ke WhatsApp"
         >
-          <span className="text-green-500">💬</span>
-          WhatsApp
+          <span className="text-green-500">
+            <MessageCircle className="w-4 h-4" />
+          </span>
+          <span className="hidden md:inline">WhatsApp</span>
         </button>
 
         {/* LinkedIn */}
@@ -157,8 +162,10 @@ const SocialShare = ({
           className="btn btn-sm btn-ghost hover:btn-info hover:text-white"
           title="Bagikan ke LinkedIn"
         >
-          <span className="text-blue-700">💼</span>
-          LinkedIn
+          <span className="text-blue-700">
+            <Linkedin className="w-4 h-4" />
+          </span>
+          <span className="hidden md:inline">LinkedIn</span>
         </button>
 
         {/* Telegram */}
@@ -167,8 +174,10 @@ const SocialShare = ({
           className="btn btn-sm btn-ghost hover:btn-info hover:text-white"
           title="Bagikan ke Telegram"
         >
-          <span className="text-blue-500">✈️</span>
-          Telegram
+          <span className="text-blue-500">
+            <PlaneIcon className="w-4 h-4" />
+          </span>
+          <span className="hidden md:inline">Telegram</span>
         </button>
 
         {/* Copy Link */}
@@ -187,7 +196,7 @@ const SocialShare = ({
           ) : (
             <>
               <span>🔗</span>
-              Salin Link
+              <span className="hidden md:inline">Salin Link</span>
             </>
           )}
         </button>

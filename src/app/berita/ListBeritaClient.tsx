@@ -9,7 +9,7 @@ import BeritaCard from "@/components/pages/berita/BeritaCard";
 import RandomBeritaSidebar from "@/components/pages/berita/RandomBeritaSidebar";
 import ViewToggle from "@/components/ui/ViewToggle";
 import { useViewPreference } from "@/hooks/useViewPreference";
-import { Newspaper, TrendingUp } from "lucide-react";
+import { Newspaper } from "lucide-react";
 import { BASE_URL } from "@/services/baseURL";
 
 const ListBeritaClient = () => {
@@ -32,7 +32,7 @@ const ListBeritaClient = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto py-8">
         <div className="alert alert-error">
           <span>Error: {error}</span>
         </div>
@@ -41,46 +41,11 @@ const ListBeritaClient = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto py-8">
       <div className="flex flex-wrap lg:flex-nowrap gap-8">
         <main className="flex-1">
-          {/* Header Section */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-            <div className="flex items-center gap-3 mb-4 lg:mb-0">
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <Newspaper className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl lg:text-3xl font-bold">
-                  Berita Fakultas Sains & Teknologi
-                </h1>
-                <p className="text-sm text-base-content/70 mt-1">
-                  Informasi terkini dan terbaru dari fakultas
-                </p>
-              </div>
-            </div>
-
-            {/* View Toggle */}
-            <ViewToggle
-              viewMode={viewMode}
-              onViewChange={setViewMode}
-              className="self-start lg:self-auto"
-            />
-          </div>
-
           {/* Stats Bar */}
-          <div className="stats shadow mb-6 w-full">
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <TrendingUp className="w-8 h-8" />
-              </div>
-              <div className="stat-title">Total Berita</div>
-              <div className="stat-value text-primary">
-                {dataBerita?.data?.length || 0}
-              </div>
-              <div className="stat-desc">Berita tersedia</div>
-            </div>
-
+          <div className="stats shadow mb-6 w-full hidden lg:flex">
             <div className="stat">
               <div className="stat-title">Mode Tampilan</div>
               <div className="stat-value text-sm">
@@ -89,6 +54,13 @@ const ListBeritaClient = () => {
               <div className="stat-desc">
                 {viewMode === "list" ? "Detail preview" : "Visual browsing"}
               </div>
+            </div>
+            <div className="stat">
+              <ViewToggle
+                viewMode={viewMode}
+                onViewChange={setViewMode}
+                className="self-start lg:self-auto"
+              />
             </div>
           </div>
 

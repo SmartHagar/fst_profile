@@ -56,7 +56,7 @@ const BeritaCard = ({
   const ListView = () => (
     <div className="space-y-4">
       {dataCard.data!.map((row, index) => {
-        const { gambar_berita, judul, isi_berita, penulis, tanggal, tag } = row;
+        const { gambar_berita, judul, isi_berita, penulis, tanggal } = row;
 
         return (
           <article
@@ -80,14 +80,6 @@ const BeritaCard = ({
                 )}
 
                 <div className="flex-1 min-w-0">
-                  {/* Tag */}
-                  <div className="flex justify-start mb-2">
-                    <span className="badge badge-primary badge-sm gap-1">
-                      <TagIcon size={10} />
-                      {formatTag(tag)}
-                    </span>
-                  </div>
-
                   {/* Title */}
                   <h3 className="card-title text-base lg:text-lg line-clamp-2 mb-2">
                     <Link

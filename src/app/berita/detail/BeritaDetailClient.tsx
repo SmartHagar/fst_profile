@@ -9,7 +9,7 @@ import BeritaImage from "@/components/pages/berita/BeritaImage";
 import BeritaContent from "@/components/pages/berita/BeritaContent";
 import RandomBeritaSidebar from "@/components/pages/berita/RandomBeritaSidebar";
 import moment from "moment";
-import { User, Calendar, ArrowLeft, Tag } from "lucide-react";
+import { User, Calendar, ArrowLeft } from "lucide-react";
 import { BASE_URL } from "@/services/baseURL";
 import Link from "next/link";
 
@@ -86,11 +86,11 @@ const BeritaDetailClient = ({ staticData }: BeritaDetailClientProps) => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto py-8">
         <div className="flex flex-wrap lg:flex-nowrap gap-8">
           <article className="flex-1">
             {/* Back Button */}
-            <div className="mb-6">
+            <div className="mb-2">
               <Link href="/berita" className="btn btn-ghost btn-sm gap-2">
                 <ArrowLeft size={16} />
                 Kembali ke Berita
@@ -99,28 +99,20 @@ const BeritaDetailClient = ({ staticData }: BeritaDetailClientProps) => {
 
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
-                {/* Tag */}
-                <div className="flex justify-start mb-4">
-                  <div className="badge badge-primary gap-2">
-                    <Tag size={12} />
-                    {beritaDetail.tag}
-                  </div>
-                </div>
-
                 {/* Title */}
-                <h1 className="card-title text-2xl lg:text-3xl text-center mb-6 leading-tight">
+                <h1 className="card-title text-xl lg:text-3xl text-center mb-6 leading-tight">
                   {beritaDetail.judul}
                 </h1>
 
                 {/* Meta Info */}
-                <div className="flex items-center justify-center gap-6 mb-6 text-sm text-base-content/70 flex-wrap">
+                <div className="flex items-center justify-center gap-x-6 gap-y-2 mb-6 text-sm text-base-content/70 flex-wrap">
                   <div className="flex items-center gap-2">
                     <User size={16} />
-                    <span className="font-medium">{beritaDetail.penulis}</span>
+                    <span className="text-sm">{beritaDetail.penulis}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} />
-                    <span>
+                    <span className="text-sm">
                       {moment(beritaDetail.tgl_terbit).format("DD MMMM YYYY")}
                     </span>
                   </div>
@@ -151,13 +143,6 @@ const BeritaDetailClient = ({ staticData }: BeritaDetailClientProps) => {
                 {/* Content */}
                 <div className="divider"></div>
                 <BeritaContent content={beritaDetail.isi_berita} />
-
-                {/* Tags Footer */}
-                <div className="divider"></div>
-                <div className="flex items-center gap-2 mt-6">
-                  <span className="text-sm font-medium">Tags:</span>
-                  <div className="badge badge-outline">{beritaDetail.tag}</div>
-                </div>
               </div>
             </div>
           </article>

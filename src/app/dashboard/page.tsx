@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
                     dataBerita.data.map((newsItem: any) => (
                       <Link
                         key={newsItem.id}
-                        href={`/berita/detail/fst-${newsItem.id}/${newsItem.tag}`}
+                        href={`/berita/detail?id=${newsItem.id}&tag=${newsItem.tag}`}
                         className="group relative block bg-black h-80 overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300"
                       >
                         <Image

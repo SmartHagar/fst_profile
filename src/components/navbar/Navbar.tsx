@@ -94,11 +94,11 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex lg:justify-end justify-start items-center">
+          {/* <div className="flex lg:justify-end justify-start items-center">
             <Link href="/login" className="btn btn-primary">
               Login
             </Link>
-          </div>
+          </div> */}
           {/* Mobile Menu Button */}
           <div className="xl:hidden flex justify-end p-4">
             <button

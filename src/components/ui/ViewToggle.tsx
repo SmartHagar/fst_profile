@@ -18,9 +18,6 @@ const ViewToggle = ({
 }: ViewToggleProps) => {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <span className="text-sm font-medium text-base-content/70">
-        Tampilan:
-      </span>
       <div className="join">
         <button
           className={`btn btn-sm join-item ${
