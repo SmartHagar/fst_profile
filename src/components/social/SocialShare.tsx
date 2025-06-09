@@ -66,13 +66,6 @@ const SocialShare = ({
     window.open(url, "_blank");
   };
 
-  // const shareToLinkedIn = () => {
-  //   const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-  //     shareUrl
-  //   )}`;
-  //   window.open(url, "_blank", "width=600,height=400");
-  // };
-
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
