@@ -1,1 +1,1 @@
-{"version":1,"functions":{"/berita":{},"/berita/detail":{}}}
+{"version":1,"functions":{"/berita":{},"/berita/detail/[id]/[tag]":{}}}
