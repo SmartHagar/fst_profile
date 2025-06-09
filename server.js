@@ -11,7 +11,7 @@ process.env.NODE_OPTIONS = "--max-old-space-size=128 --optimize-for-size";
 // Disable undici jika memungkinkan
 process.env.NODE_NO_WARNINGS = "1";
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 
 console.log("Starting ultra minimal server...");
 
