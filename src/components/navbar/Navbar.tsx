@@ -94,11 +94,10 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* <div className="flex lg:justify-end justify-start items-center">
-            <Link href="/login" className="btn btn-primary">
-              Login
-            </Link>
-          </div> */}
+          <div className="xl:hidden flex justify-center flex-col font-bold ml-4 text-transparent bg-clip-text bg-gradient-to-r from-secondary via-accent to-green-600">
+            <p className="text-lg ">Fakultas Sains & Teknologi</p>
+            <p>UOGP</p>
+          </div>
           {/* Mobile Menu Button */}
           <div className="xl:hidden flex justify-end p-4">
             <button

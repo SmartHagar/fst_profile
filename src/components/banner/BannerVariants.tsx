@@ -65,7 +65,7 @@ export const MinimalBanner: React.FC<{
             </ul>
           </div>
         )}
-        <h1 className="text-xl md:text-4xl font-bold text-base-content">
+        <h1 className="text-xl md:text-4xl font-bold text-base-content font-merriweather">
           {title}
         </h1>
       </div>

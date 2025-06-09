@@ -8,8 +8,27 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  font-family: "Inter", sans-serif;
+/* fonts */
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-VariableFont.ttf");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Italic-VariableFont.ttf");
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Merriweather";
+  src: url("/fonts/Merriweather/Merriweather-VariableFont.ttf");
+}
+
+@font-face {
+  font-family: "Merriweather";
+  src: url("/fonts/Merriweather/Merriweather-Italic-VariableFont.ttf");
+  font-style: italic;
 }
 
 /* Custom scrollbar */

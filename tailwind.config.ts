@@ -16,6 +16,7 @@ const config: Config = {
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
+        merriweather: ["Merriweather", "sans-serif"],
       },
       container: {
         center: true,

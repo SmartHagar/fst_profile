@@ -101,7 +101,7 @@ const Banner: React.FC<BannerProps> = ({
           )}
 
           {/* Main Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+          <h1 className="text-2xl font-merriweather sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
             {title}
           </h1>
 
