@@ -141,11 +141,11 @@ const BeritaDetailClient = ({ staticData }: BeritaDetailClientProps) => {
 
                 {/* Social Share */}
                 <SocialShare
-                  shareUrl={shareUrl}
                   title={beritaDetail.judul}
                   description={beritaDetail.isi_berita
                     .replace(/<[^>]*>?/gm, "")
                     .substring(0, 100)}
+                  beritaData={beritaDetail}
                 />
 
                 {/* Content */}

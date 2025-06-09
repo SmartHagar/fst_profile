@@ -1,254 +1,240 @@
 /** @format */
-
+// src/components/social/SocialShare.tsx - Updated untuk PHP
 "use client";
 
-import { useState } from "react";
-import {
-  Facebook,
-  Twitter,
-  MessageCircle,
-  Link as LinkIcon,
-  Send,
-  Share2,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { generateSocialUrls, testSocialSharing } from "@/utils/beritaUtils";
 
 interface SocialShareProps {
-  shareUrl: string;
   title: string;
-  description?: string;
-  hashtags?: string[];
+  description: string;
+  beritaData: {
+    id: number;
+    tag: string;
+    judul: string;
+    isi_berita: string;
+    [key: string]: any;
+  };
+  showTestButton?: boolean; // untuk development
 }
 
 const SocialShare = ({
-  shareUrl,
   title,
-  description = "",
-  hashtags = [],
+  description,
+  beritaData,
+  showTestButton = false,
 }: SocialShareProps) => {
-  const [copySuccess, setCopySuccess] = useState(false);
-  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [socialUrls, setSocialUrls] = useState<any>(null);
+  const [copied, setCopied] = useState(false);
 
-  // Format hashtags untuk Twitter
-  const formatHashtags = (tags: string[]) => {
-    return tags.map((tag) => `#${tag.replace(/\s+/g, "")}`).join(" ");
+  useEffect(() => {
+    if (beritaData) {
+      const urls = generateSocialUrls(beritaData);
+      setSocialUrls(urls);
+    }
+  }, [beritaData]);
+
+  const handleShare = (platform: string) => {
+    if (!socialUrls) return;
+
+    const url = socialUrls[platform];
+    if (platform === "copy") {
+      handleCopyLink();
+    } else {
+      window.open(
+        url,
+        "_blank",
+        "width=600,height=400,scrollbars=yes,resizable=yes"
+      );
+    }
   };
 
-  const shareToFacebook = () => {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      shareUrl
-    )}`;
-    window.open(url, "_blank", "width=600,height=400");
-  };
+  const handleCopyLink = async () => {
+    if (!socialUrls) return;
 
-  const shareToTwitter = () => {
-    const text = `${title}${
-      hashtags.length ? " " + formatHashtags(hashtags) : ""
-    }`;
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      text
-    )}&url=${encodeURIComponent(shareUrl)}`;
-    window.open(url, "_blank", "width=600,height=400");
-  };
-
-  const shareToWhatsApp = () => {
-    const text = `*${title}*${
-      description ? "\n\n" + description : ""
-    }\n\n${shareUrl}`;
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
-  };
-
-  const shareToTelegram = () => {
-    const text = `${title}${description ? "\n\n" + description : ""}`;
-    const url = `https://t.me/share/url?url=${encodeURIComponent(
-      shareUrl
-    )}&text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
-  };
-
-  const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
+      await navigator.clipboard.writeText(socialUrls.copy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Gagal menyalin URL: ", err);
+      console.error("Failed to copy: ", err);
       // Fallback untuk browser lama
       const textArea = document.createElement("textarea");
-      textArea.value = shareUrl;
+      textArea.value = socialUrls.copy;
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand("copy");
       document.body.removeChild(textArea);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
-  // Web Share API untuk mobile
   const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title,
-          text: description,
-          url: shareUrl,
-        });
-      } catch (err) {
-        console.log("Error sharing:", err);
-      }
-    } else {
-      setShowShareMenu(!showShareMenu);
+    if (!socialUrls || !navigator.share) return;
+
+    try {
+      await navigator.share({
+        title: title,
+        text: description,
+        url: socialUrls.copy,
+      });
+    } catch (err) {
+      console.error("Error sharing:", err);
     }
   };
 
-  const shareButtons = [
-    {
-      onClick: shareToFacebook,
-      icon: Facebook,
-      bgColor: "btn-primary",
-      label: "Share to Facebook",
-      color: "#1877F2",
-    },
-    {
-      onClick: shareToTwitter,
-      icon: Twitter,
-      bgColor: "btn-info",
-      label: "Share to Twitter",
-      color: "#1DA1F2",
-    },
-    {
-      onClick: shareToWhatsApp,
-      icon: MessageCircle,
-      bgColor: "btn-success",
-      label: "Share to WhatsApp",
-      color: "#25D366",
-    },
-    {
-      onClick: shareToTelegram,
-      icon: Send,
-      bgColor: "btn-accent",
-      label: "Share to Telegram",
-      color: "#0088CC",
-    },
-  ];
+  const handleTestSharing = () => {
+    if (process.env.NODE_ENV === "development" && beritaData) {
+      testSocialSharing(beritaData);
+    }
+  };
+
+  if (!socialUrls) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <div className="loading loading-spinner loading-sm"></div>
+        <span className="ml-2">Memuat opsi share...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="mt-4 p-4 bg-base-200 rounded-lg">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <span className="font-semibold text-sm flex items-center gap-2">
-          <Share2 size={16} />
-          Bagikan Artikel:
+    <div className="bg-base-200 rounded-lg p-4">
+      <div className="flex flex-wrap items-center gap-3 mb-3">
+        <span className="text-sm font-medium text-base-content/70">
+          📤 Bagikan artikel ini:
         </span>
-
-        <div className="flex flex-wrap gap-2">
-          {/* Desktop - Show all buttons */}
-          <div className="hidden sm:flex gap-2">
-            {shareButtons.map((button, index) => {
-              const IconComponent = button.icon;
-              return (
-                <button
-                  key={index}
-                  onClick={button.onClick}
-                  className={`btn btn-sm btn-circle ${button.bgColor} hover:scale-110 transition-transform`}
-                  aria-label={button.label}
-                  title={button.label}
-                  style={{ backgroundColor: button.color }}
-                >
-                  <IconComponent size={16} />
-                </button>
-              );
-            })}
-
-            {/* Copy Link Button */}
-            <div className="relative">
-              <button
-                onClick={copyToClipboard}
-                className="btn btn-sm btn-circle btn-neutral hover:scale-110 transition-transform"
-                aria-label="Copy link"
-                title="Copy link"
-              >
-                <LinkIcon size={16} />
-              </button>
-
-              {copySuccess && (
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-10">
-                  <div className="alert alert-success alert-sm shadow-lg">
-                    <span className="text-xs">Link tersalin!</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Mobile - Show native share or toggle menu */}
-          <div className="sm:hidden">
-            <button
-              onClick={handleNativeShare}
-              className="btn btn-primary btn-sm gap-2"
-            >
-              <Share2 size={16} />
-              Bagikan
-            </button>
-
-            {/* Fallback share menu untuk mobile tanpa Web Share API */}
-            {showShareMenu && !navigator.share && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
-                <div className="bg-base-100 w-full rounded-t-2xl p-4 space-y-2">
-                  <div className="text-center font-semibold mb-4">
-                    Bagikan ke:
-                  </div>
-
-                  {shareButtons.map((button, index) => {
-                    const IconComponent = button.icon;
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          button.onClick();
-                          setShowShareMenu(false);
-                        }}
-                        className="btn btn-ghost justify-start w-full gap-3"
-                      >
-                        <IconComponent size={20} color={button.color} />
-                        {button.label}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    onClick={() => {
-                      copyToClipboard();
-                      setShowShareMenu(false);
-                    }}
-                    className="btn btn-ghost justify-start w-full gap-3"
-                  >
-                    <LinkIcon size={20} />
-                    Copy Link
-                  </button>
-
-                  <button
-                    onClick={() => setShowShareMenu(false)}
-                    className="btn btn-outline w-full mt-4"
-                  >
-                    Batal
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Hashtags Display */}
-      {hashtags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-3">
-          {hashtags.map((tag, index) => (
-            <span key={index} className="badge badge-outline badge-sm">
-              #{tag}
-            </span>
-          ))}
+      <div className="flex flex-wrap gap-2">
+        {/* Native Share (Mobile) */}
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-expect-error */}
+        {navigator.share && (
+          <button
+            onClick={handleNativeShare}
+            className="btn btn-sm btn-primary"
+            title="Bagikan"
+          >
+            📱 Share
+          </button>
+        )}
+
+        {/* Facebook */}
+        <button
+          onClick={() => handleShare("facebook")}
+          className="btn btn-sm btn-ghost hover:btn-primary hover:text-white"
+          title="Bagikan ke Facebook"
+        >
+          <span className="text-blue-600">📘</span>
+          Facebook
+        </button>
+
+        {/* Twitter */}
+        <button
+          onClick={() => handleShare("twitter")}
+          className="btn btn-sm btn-ghost hover:btn-info hover:text-white"
+          title="Bagikan ke Twitter"
+        >
+          <span className="text-sky-500">🐦</span>
+          Twitter
+        </button>
+
+        {/* WhatsApp */}
+        <button
+          onClick={() => handleShare("whatsapp")}
+          className="btn btn-sm btn-ghost hover:btn-success hover:text-white"
+          title="Bagikan ke WhatsApp"
+        >
+          <span className="text-green-500">💬</span>
+          WhatsApp
+        </button>
+
+        {/* LinkedIn */}
+        <button
+          onClick={() => handleShare("linkedin")}
+          className="btn btn-sm btn-ghost hover:btn-info hover:text-white"
+          title="Bagikan ke LinkedIn"
+        >
+          <span className="text-blue-700">💼</span>
+          LinkedIn
+        </button>
+
+        {/* Telegram */}
+        <button
+          onClick={() => handleShare("telegram")}
+          className="btn btn-sm btn-ghost hover:btn-info hover:text-white"
+          title="Bagikan ke Telegram"
+        >
+          <span className="text-blue-500">✈️</span>
+          Telegram
+        </button>
+
+        {/* Copy Link */}
+        <button
+          onClick={handleCopyLink}
+          className={`btn btn-sm btn-ghost hover:btn-warning hover:text-white ${
+            copied ? "btn-success" : ""
+          }`}
+          title="Salin Link"
+        >
+          {copied ? (
+            <>
+              <span>✅</span>
+              Tersalin!
+            </>
+          ) : (
+            <>
+              <span>🔗</span>
+              Salin Link
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Test Button untuk Development */}
+      {showTestButton && process.env.NODE_ENV === "development" && (
+        <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-yellow-800">
+                🧪 Development Mode
+              </p>
+              <p className="text-xs text-yellow-700">
+                Test social sharing URLs dan preview
+              </p>
+            </div>
+            <button
+              onClick={handleTestSharing}
+              className="btn btn-xs btn-warning"
+            >
+              Test URLs
+            </button>
+          </div>
         </div>
+      )}
+
+      {/* URL Preview untuk Development */}
+      {process.env.NODE_ENV === "development" && (
+        <details className="mt-3">
+          <summary className="text-xs text-base-content/50 cursor-pointer hover:text-base-content/70">
+            🔍 Debug Info (Development)
+          </summary>
+          <div className="mt-2 p-2 bg-base-300 rounded text-xs font-mono overflow-x-auto">
+            <div className="space-y-1">
+              <div>
+                <strong>Share URL:</strong> {socialUrls.copy}
+              </div>
+              <div>
+                <strong>Facebook:</strong> {socialUrls.facebook}
+              </div>
+              <div>
+                <strong>Twitter:</strong> {socialUrls.twitter}
+              </div>
+            </div>
+          </div>
+        </details>
       )}
     </div>
   );
