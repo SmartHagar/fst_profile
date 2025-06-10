@@ -8,7 +8,7 @@ export interface ApiResponse<T> {
 }
 
 // Prodi (Program Studi)
-export interface Prodi {
+export interface ProdiType {
   id: number;
   kd_prodi: string;
   nm_prodi: string;
@@ -17,7 +17,7 @@ export interface Prodi {
 }
 
 // Kegiatan
-export interface Kegiatan {
+export interface KegiatanType {
   id: number;
   nm_kegiatan: string;
   deskripsi?: string;
@@ -26,40 +26,40 @@ export interface Kegiatan {
 }
 
 // Kegiatan Detail
-export interface KegiatanDetail {
+export interface KegiatanDetailType {
   id: number;
   kegiatan_id: number;
-  kegiatan: Kegiatan;
+  kegiatan: KegiatanType;
   created_at?: string;
   updated_at?: string;
 }
 
 // Slide
-export interface Slide {
+export interface SlideType {
   id: number;
   path_gambar: string;
   kegiatan_det_id: number;
-  kegiatan_det: KegiatanDetail;
+  kegiatan_det: KegiatanDetailType;
   status: string;
   created_at?: string;
   updated_at?: string;
 }
 
 // Pengumuman
-export interface Pengumuman {
+export interface PengumumanType {
   id: number;
   judul_pengumuman: string;
   isi_pengumuman: string;
   tgl_pengumuman: string;
-  prodi_id: number;
-  prodi: Prodi;
+  prodi_id: number | string;
+  prodi: ProdiType;
   status: string;
   created_at?: string;
   updated_at?: string;
 }
 
 // Berita
-export interface Berita {
+export interface BeritaType {
   id: number;
   judul: string;
   isi_berita: string;
@@ -74,7 +74,7 @@ export interface Berita {
 }
 
 // Video
-export interface Video {
+export interface VideoType {
   id: number;
   judul: string;
   url: string;
@@ -102,9 +102,9 @@ export interface MenuItem {
 
 // Store State Interfaces
 export interface BeritaStore {
-  dataBerita: ApiResponse<Berita[]>;
-  dataRandomBerita: Berita[];
-  dtShowBerita: Berita | null;
+  dataBerita: ApiResponse<BeritaType[]>;
+  dataRandomBerita: BeritaType[];
+  dtShowBerita: BeritaType | null;
   setBerita: () => Promise<{ status: string; data?: any; error?: any }>;
   setShowBerita: (params: {
     id: string;
@@ -114,17 +114,17 @@ export interface BeritaStore {
 }
 
 export interface PengumumanStore {
-  dataPengumuman: ApiResponse<Pengumuman[]>;
+  dataPengumuman: ApiResponse<PengumumanType[]>;
   setPengumuman: () => Promise<{ status: string; data?: any; error?: any }>;
 }
 
 export interface SlideStore {
-  dataSlide: Slide[];
+  dataSlide: SlideType[];
   setSlide: () => Promise<{ status: string; data?: any; error?: any }>;
 }
 
 export interface VideoStore {
-  dataVideo: Video[];
+  dataVideo: VideoType[];
   setVideo: (
     page?: number
   ) => Promise<{ status: string; data?: any; error?: any }>;
@@ -133,10 +133,10 @@ export interface VideoStore {
 
 // Dashboard Context
 export interface DashboardContextType {
-  dataSlide: Slide[];
-  dataPengumuman: ApiResponse<Pengumuman[]>;
+  dataSlide: SlideType[];
+  dataPengumuman: ApiResponse<PengumumanType[]>;
   setOpen: (open: boolean) => void;
   open: boolean;
-  setRow: (row: Pengumuman | object) => void;
-  row: Pengumuman | object;
+  setRow: (row: PengumumanType | object) => void;
+  row: PengumumanType | object;
 }

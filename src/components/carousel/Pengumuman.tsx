@@ -12,8 +12,8 @@ import "moment/locale/id";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import { Pengumuman as PengumumanType } from "@/types";
-import { usePengumuman } from "@/stores/pengumuman";
+import { PengumumanType } from "@/types";
+import usePengumuman from "@/stores/pengumuman";
 
 moment.locale("id");
 
@@ -72,6 +72,9 @@ const Pengumuman: React.FC = () => {
     // setOpen(true);
     // setRow(row);
   };
+  console.log({ dataPengumuman });
+
+  // return null;
 
   return (
     <Swiper
@@ -86,7 +89,7 @@ const Pengumuman: React.FC = () => {
       modules={[Autoplay, Mousewheel]}
       className="mySwiper h-full"
     >
-      {dataPengumuman &&
+      {dataPengumuman?.data &&
         dataPengumuman.data.map((row: PengumumanType, index: number) => {
           const colors = getColorClasses(row.prodi.kd_prodi);
           return (

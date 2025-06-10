@@ -12,7 +12,7 @@ import "swiper/css/navigation";
 import "swiper/css/effect-cube";
 
 import Image from "next/image";
-import { Slide } from "@/types";
+import { SlideType } from "@/types";
 import { useSlide } from "@/stores/slide";
 import { BASE_URL } from "@/services/baseURL";
 
@@ -46,7 +46,7 @@ const ImagesCarousel: React.FC = () => {
       className="mySwiper"
     >
       {dataSlide &&
-        dataSlide.map((row: Slide, index: number) => (
+        dataSlide.map((row: SlideType, index: number) => (
           <SwiperSlide key={index}>
             <div className="h-48 overflow-hidden lg:h-96 md:h-80 cursor-grab rounded-lg">
               <Image

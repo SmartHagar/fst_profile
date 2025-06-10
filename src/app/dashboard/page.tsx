@@ -12,13 +12,13 @@ import Image from "next/image";
 import { BASE_URL } from "@/services/baseURL";
 import ImagesCarousel from "@/components/carousel/Images";
 import Pengumuman from "@/components/carousel/Pengumuman";
-import { useVideo } from "@/stores/video";
 import useBerita from "@/stores/berita";
 import { MonitorSpeaker, Newspaper } from "lucide-react";
+import useVideo from "@/stores/video";
 
 const Dashboard: React.FC = () => {
   // store
-  const { setVideoUtama, dataVideo } = useVideo();
+  const { setVideoUtama, dataVideoUtama } = useVideo();
   const { setBerita, dataBerita } = useBerita();
 
   useEffect(() => {
@@ -91,13 +91,13 @@ const Dashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="font-comic-neue h-72 w-full mt-2">
-                      {dataVideo.length > 0 ? (
+                      {dataVideoUtama.length > 0 ? (
                         <ReactPlayer
-                          url={dataVideo[0].url}
+                          url={dataVideoUtama[0].url}
                           controls
                           width="100%"
                           height="100%"
-                          title={dataVideo[0].judul}
+                          title={dataVideoUtama[0].judul}
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
