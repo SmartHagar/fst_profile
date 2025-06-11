@@ -9,7 +9,7 @@ const BiologiPage = () => {
   useEffect(() => {
     setBannerConfig({
       type: "custom",
-      backgroundImage: "/images/banner/biologi.png",
+      backgroundImage: "/images/banner/geo.jpg",
       title: "Prodi Biologi",
       height: "sm",
     });

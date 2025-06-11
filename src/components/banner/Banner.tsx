@@ -54,7 +54,7 @@ const Banner: React.FC<BannerProps> = ({
           src={backgroundImage}
           alt={title}
           fill
-          className="object-cover"
+          className="object-cover object-bottom"
           priority
         />
       </div>

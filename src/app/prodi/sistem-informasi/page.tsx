@@ -9,7 +9,7 @@ const BiologiPage = () => {
   useEffect(() => {
     setBannerConfig({
       type: "custom",
-      backgroundImage: "/images/banner/sistem-informasi.png",
+      backgroundImage: "/images/banner/si.jpg",
       title: "Prodi Sistem Informasi",
       height: "sm",
     });
