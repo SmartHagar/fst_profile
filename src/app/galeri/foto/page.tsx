@@ -30,8 +30,11 @@ const GaleriPage = () => {
       show: true,
       breadcrumbs: [
         {
-          label: "Galeri",
+          label: "Beranda",
           href: "/",
+        },
+        {
+          label: "Galeri",
         },
         {
           label: "Galeri Foto",

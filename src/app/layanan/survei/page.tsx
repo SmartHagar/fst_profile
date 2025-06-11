@@ -20,8 +20,11 @@ const SurveiPage = () => {
       show: true,
       breadcrumbs: [
         {
-          label: "Layanan",
+          label: "Beranda",
           href: "/",
+        },
+        {
+          label: "Layanan",
         },
         {
           label: "Layanan Survei Kepuasan",

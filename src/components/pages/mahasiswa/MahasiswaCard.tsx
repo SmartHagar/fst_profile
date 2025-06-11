@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import ScrollRevealComponent from "@/components/effects/ScrollRevealComponent";
 import Image from "next/image";
+import { BASE_URL_SIAKAD } from "@/services/baseURL";
 
 interface MahasiswaCardProps {
   mahasiswa: MahasiswaType;
@@ -75,7 +76,7 @@ const MahasiswaCard: React.FC<MahasiswaCardProps> = ({
     if (!imgPath) return null;
     return imgPath.startsWith("http")
       ? imgPath
-      : `https://back-siakad.fstuogp.com/storage/${imgPath}`;
+      : `${BASE_URL_SIAKAD}/storage/${imgPath}`;
   };
 
   const getInitials = (name: string) => {
@@ -144,7 +145,9 @@ const MahasiswaCard: React.FC<MahasiswaCardProps> = ({
               <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 leading-tight">
                 {mahasiswa.nm_mhs}
               </h3>
-              <p className="text-xs text-gray-600 mt-1">NPM: {mahasiswa.NPM}</p>
+              <p className="text-xs text-gray-600 mt-1">
+                NPM: {mahasiswa.npm_full}
+              </p>
 
               {/* Status Badge */}
               <div className="flex items-center gap-2 mt-2">

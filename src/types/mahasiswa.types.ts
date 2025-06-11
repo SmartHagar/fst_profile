@@ -34,6 +34,7 @@ export interface MahasiswaType {
   id: string;
   prodi_id: string;
   NPM: string;
+  npm_full: string;
   nm_mhs: string;
   jenkel: "Laki-laki" | "Perempuan";
   thn_angkatan: number;

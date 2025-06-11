@@ -14,8 +14,11 @@ const KesehatanPage = () => {
       show: true,
       breadcrumbs: [
         {
-          label: "Profile",
+          label: "Beranda",
           href: "/",
+        },
+        {
+          label: "Layanan",
         },
         {
           label: "Pelayanan Kesehatan FST-UOGP",

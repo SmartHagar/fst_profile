@@ -46,8 +46,8 @@ const initialFilters: MahasiswaFilters = {
   prodi_id: "",
   thn_angkatan: "",
   jenkel: "all",
-  sort_by: "nm_mhs",
-  sort_order: "asc",
+  sort_by: "thn_angkatan",
+  sort_order: "desc",
   limit: 16,
   page: 1,
 };

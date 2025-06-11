@@ -2,14 +2,13 @@
 // navbar/ListMenus.tsx
 import { MenuItem } from "@/types";
 import {
+  Activity,
   AsteriskSquareIcon,
   BookOpenText,
-  Download,
   GalleryHorizontal,
   LayoutDashboard,
   Newspaper,
   ServerIcon,
-  User2,
 } from "lucide-react";
 
 const ListMenu: MenuItem[] = [
@@ -103,31 +102,24 @@ const ListMenu: MenuItem[] = [
         name: "Survei Kepuasan",
         href: "/layanan/survei",
       },
+      {
+        name: "Dokumen",
+        href: "/layanan/dokumen",
+      },
     ],
   },
   {
-    name: "Download",
-    href: "/download",
-    icon: <Download />,
+    name: "Akademik",
+    href: "/komunitas",
+    icon: <Activity />,
     children: [
       {
         name: "Jadwal",
-        href: "/download/jadwal",
+        href: "/akademik/jadwal",
       },
-      {
-        name: "Dokumen",
-        href: "/download/dokumen",
-      },
-    ],
-  },
-  {
-    name: "Komunitas",
-    href: "/komunitas",
-    icon: <User2 />,
-    children: [
       {
         name: "Mahasiswa",
-        href: "/komunitas/mahasiswa",
+        href: "/akademik/mahasiswa",
       },
       {
         name: "Alumni",
