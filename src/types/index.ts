@@ -140,3 +140,50 @@ export interface DashboardContextType {
   setRow: (row: PengumumanType | object) => void;
   row: PengumumanType | object;
 }
+
+export interface DokumenType {
+  id: number;
+  jenis_id: string;
+  nama: string;
+  file: string;
+  created_at: string;
+  updated_at: string;
+  prodi_id: string;
+  jenis_dokumen: {
+    id: number;
+    nama: string;
+    created_at: string;
+    updated_at: string;
+  };
+  prodi: {
+    id: number;
+    kd_prodi: string;
+    nm_prodi: string;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+export interface DokumenResponse {
+  current_page: number;
+  data: DokumenType[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: Array<{
+    url: string | null;
+    label: string;
+    active: boolean;
+  }>;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
+export interface GroupedSurvei {
+  [prodiName: string]: DokumenType[];
+}

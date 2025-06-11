@@ -131,7 +131,8 @@ const ListMenu: MenuItem[] = [
       },
       {
         name: "Alumni",
-        href: "/komunitas/alumni",
+        href: "https://alumni.fstuogp.com",
+        blank: true,
       },
     ],
   },
