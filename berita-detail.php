@@ -1,7 +1,20 @@
 <?php
 
-/** @format */
-// berita-detail.php - Fixed version with proper debug and preview handling
+// Tambahkan di awal file setelah opening PHP tag
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Log semua environment
+if (isset($_GET['debug'])) {
+    error_log("=== BERITA DEBUG START ===");
+    error_log("REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A'));
+    error_log("SCRIPT_NAME: " . ($_SERVER['SCRIPT_NAME'] ?? 'N/A'));
+    error_log("QUERY_STRING: " . ($_SERVER['QUERY_STRING'] ?? 'N/A'));
+    error_log("DOCUMENT_ROOT: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'N/A'));
+    error_log("Current working directory: " . getcwd());
+    error_log("=== BERITA DEBUG END ===");
+}
+
 
 // Configuration
 $BASE_URL = "https://fstuogp.com";
