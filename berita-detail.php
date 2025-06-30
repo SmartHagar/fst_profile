@@ -118,13 +118,22 @@ $cache_key = "berita_{$berita_id}_{$berita_tag}";
 try {
     $berita = fetchBeritaData($api_endpoint, $cache_key, $config['CACHE_TIME']);
 
+    // Debug logging
+    if (isset($_GET['debug'])) {
+        header('Content-Type: text/plain');
+        echo "API Endpoint: " . $api_endpoint . "\n";
+        echo "Response: " . print_r($berita, true) . "\n";
+        exit;
+    }
+
     if (!$berita || !isset($berita['id'])) {
         $error = true;
+        // Log untuk debugging
+        error_log("Berita fetch failed - ID: $berita_id, Tag: $berita_tag, Response: " . json_encode($berita));
     }
 } catch (Exception $e) {
     $error = true;
-    // Log error untuk debugging
-    // error_log("Berita fetch error: " . $e->getMessage());
+    error_log("Berita fetch error: " . $e->getMessage());
 }
 
 // Prepare meta data
