@@ -1,165 +1,79 @@
 <?php
 
 /** @format */
-// berita-detail.php - SEO handler untuk social media sharing
-
-// Error reporting untuk debugging (hapus di production)
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+// berita-detail.php - Tempatkan di root shared hosting
 
 // Configuration
-$config = [
-    'BASE_URL' => 'https://fstuogp.com',      // Domain utama Anda
-    'API_URL' => 'https://admin.fstuogp.com',  // API backend
-    'APP_PATH' => '/berita/detail',            // Path di Next.js app (tanpa /out)
-    'DEFAULT_IMAGE' => '/images/default-news.jpg',
-    'API_TIMEOUT' => 10,
-    'CACHE_TIME' => 3600 // 1 jam
-];
+$BASE_URL = "https://fstuogp.com"; // Ganti dengan domain Anda
+$API_URL = "https://admin.fstuogp.com";     // Ganti dengan API endpoint Anda
+$APP_URL = "/berita/detail";
 
-// Get and validate parameters
-$berita_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-$berita_tag = $_GET['tag'] ?? ''; // Don't use FILTER_SANITIZE_STRING as it may alter the tag
-$is_preview = filter_input(INPUT_GET, 'preview', FILTER_VALIDATE_BOOLEAN);
+// Get parameters
+$berita_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$berita_tag = isset($_GET['tag']) ? $_GET['tag'] : '';
 
-// Clean tag but preserve original format
-$berita_tag = trim($berita_tag);
-
-// Log untuk debugging (comment di production)
-// file_put_contents('berita-debug.log', date('Y-m-d H:i:s') . " - ID: $berita_id, Tag: $berita_tag\n", FILE_APPEND);
-
-// Validate required parameters
+// Validate parameters
 if (!$berita_id || !$berita_tag) {
-    header("HTTP/1.1 404 Not Found");
-    header("Location: {$config['BASE_URL']}/berita/");
+    header("Location: $BASE_URL/berita");
     exit;
-}
-
-// Function to detect crawlers
-function isCrawler($userAgent = null)
-{
-    if (!$userAgent) {
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    }
-
-    $crawlers = [
-        'facebookexternalhit',
-        'Facebot',
-        'Twitterbot',
-        'WhatsApp',
-        'LinkedInBot',
-        'Googlebot',
-        'bingbot',
-        'Slackbot',
-        'Telegrambot',
-        'SkypeUriPreview',
-        'Discordbot',
-        'embedly',
-        'quora link preview',
-        'outbrain',
-        'pinterest',
-        'vkShare'
-    ];
-
-    foreach ($crawlers as $crawler) {
-        if (stripos($userAgent, $crawler) !== false) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// Function to fetch data from API with caching
-function fetchBeritaData($api_url, $cache_key, $cache_time)
-{
-    // Try cache first
-    $cache_file = sys_get_temp_dir() . '/berita_cache_' . md5($cache_key) . '.json';
-
-    if (file_exists($cache_file) && (time() - filemtime($cache_file) < $cache_time)) {
-        $cached_data = file_get_contents($cache_file);
-        return json_decode($cached_data, true);
-    }
-
-    // Fetch from API
-    $context = stream_context_create([
-        'http' => [
-            'timeout' => 10,
-            'method' => 'GET',
-            'header' => [
-                'Accept: application/json',
-                'User-Agent: BeritaCrawler/1.0'
-            ],
-            'ignore_errors' => true
-        ]
-    ]);
-
-    $response = @file_get_contents($api_url, false, $context);
-
-    if ($response !== false) {
-        $data = json_decode($response, true);
-
-        // Cache successful response
-        if ($data && isset($data['id'])) {
-            @file_put_contents($cache_file, $response);
-            return $data;
-        }
-    }
-
-    return null;
 }
 
 // Initialize variables
 $berita = null;
 $error = false;
 
-// Build API URL
-$api_endpoint = $config['API_URL'] . "/json/berita/detail/" . $berita_id . "/" . $berita_tag;
-$cache_key = "berita_{$berita_id}_{$berita_tag}";
-
-// Fetch berita data
+// Fetch berita data from API
 try {
-    $berita = fetchBeritaData($api_endpoint, $cache_key, $config['CACHE_TIME']);
+    $api_url = $API_URL . "/json/berita/detail/" . $berita_id . "/" . urlencode($berita_tag);
 
-    // Debug logging
-    if (isset($_GET['debug'])) {
-        header('Content-Type: text/plain');
-        echo "API Endpoint: " . $api_endpoint . "\n";
-        echo "Response: " . print_r($berita, true) . "\n";
-        exit;
-    }
+    // Create context for file_get_contents with timeout
+    $context = stream_context_create([
+        'http' => [
+            'timeout' => 10,
+            'method' => 'GET',
+            'header' => [
+                'Content-Type: application/json',
+                'User-Agent: Mozilla/5.0 (compatible; BeritaCrawler/1.0)'
+            ]
+        ]
+    ]);
 
-    if (!$berita || !isset($berita['id'])) {
-        $error = true;
-        // Log untuk debugging
-        error_log("Berita fetch failed - ID: $berita_id, Tag: $berita_tag, Response: " . json_encode($berita));
+    $response = @file_get_contents($api_url, false, $context);
 
-        // Special handling for Facebook crawler
-        if ($is_crawler && $berita_id && $berita_tag) {
-            // Try alternative API endpoints or create fallback
-            error_log("Facebook crawler detected with no data, creating fallback");
+    if ($response !== false) {
+        $berita = json_decode($response, true);
 
-            // Create minimal valid data for crawler
-            $berita = [
-                'id' => $berita_id,
-                'judul' => 'Berita Fakultas Sains & Teknologi',
-                'isi_berita' => 'Klik untuk membaca berita lengkap di website Fakultas Sains & Teknologi.',
-                'gambar_berita' => '',
-                'penulis' => 'Admin FST',
-                'tag' => $berita_tag,
-                'tgl_terbit' => date('Y-m-d')
-            ];
-            $error = false;
+        // Validate response
+        if (!$berita || !isset($berita['id'])) {
+            $error = true;
         }
+    } else {
+        $error = true;
     }
 } catch (Exception $e) {
     $error = true;
-    error_log("Berita fetch error: " . $e->getMessage());
 }
 
-// Prepare meta data
-if ($berita && !$error) {
-    // Extract and clean data
+// If API fails, redirect to app with error handling
+if ($error || !$berita) {
+    // For crawlers, show basic error page with meta tags
+    $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+    $is_crawler = (
+        strpos($user_agent, 'facebookexternalhit') !== false ||
+        strpos($user_agent, 'twitterbot') !== false ||
+        strpos($user_agent, 'whatsapp') !== false ||
+        strpos($user_agent, 'linkedinbot') !== false ||
+        strpos($user_agent, 'googlebot') !== false
+    );
+
+    if (!$is_crawler) {
+        header("Location: $BASE_URL$APP_URL?id=$berita_id&tag=" . urlencode($berita_tag));
+        exit;
+    }
+}
+
+// Prepare data for meta tags
+if ($berita) {
     $judul = htmlspecialchars($berita['judul'] ?? 'Berita', ENT_QUOTES, 'UTF-8');
     $isi_berita = $berita['isi_berita'] ?? '';
     $gambar_berita = $berita['gambar_berita'] ?? '';
@@ -167,71 +81,56 @@ if ($berita && !$error) {
     $tag = htmlspecialchars($berita['tag'] ?? $berita_tag, ENT_QUOTES, 'UTF-8');
     $tgl_terbit = $berita['tgl_terbit'] ?? date('Y-m-d');
 
-    // Clean description - remove HTML and truncate
+    // Clean description
     $description = strip_tags($isi_berita);
     $description = preg_replace('/\s+/', ' ', $description);
     $description = trim($description);
-
-    // Smart truncate - jangan potong di tengah kata
-    if (mb_strlen($description, 'UTF-8') > 160) {
-        $description = mb_substr($description, 0, 160, 'UTF-8');
-        $last_space = mb_strrpos($description, ' ', 0, 'UTF-8');
-        if ($last_space !== false) {
-            $description = mb_substr($description, 0, $last_space, 'UTF-8');
-        }
+    $description = mb_substr($description, 0, 160, 'UTF-8');
+    if (strlen($description) >= 160) {
         $description .= '...';
     }
     $description = htmlspecialchars($description, ENT_QUOTES, 'UTF-8');
 
-    // Build image URL
-    if (!empty($gambar_berita)) {
-        // Handle relative vs absolute paths
-        if (strpos($gambar_berita, 'http') !== 0) {
-            $image_url = $config['API_URL'] . "/storage/" . ltrim($gambar_berita, '/');
-        } else {
-            $image_url = $gambar_berita;
-        }
-    } else {
-        $image_url = $config['BASE_URL'] . $config['DEFAULT_IMAGE'];
-    }
+    // Image URL
+    $image_url = !empty($gambar_berita) ? $API_URL . "/storage/" . $gambar_berita : $BASE_URL . "/images/default-news.jpg";
 
-    // Build URLs
-    $current_url = $config['BASE_URL'] . $config['APP_PATH'] . "/?id={$berita_id}&tag=" . $berita_tag;
-    $canonical_url = $current_url; // Atau gunakan URL SEO-friendly jika ada
-
-    // Format dates
-    $formatted_date = date('d F Y', strtotime($tgl_terbit));
-    $iso_date = date('c', strtotime($tgl_terbit));
+    // Page URLs
+    $current_url = $BASE_URL . "/berita-detail.php?id=$berita_id&tag=" . urlencode($berita_tag);
+    $app_url = $BASE_URL . $APP_URL . "?id=$berita_id&tag=" . urlencode($berita_tag);
 } else {
-    // Fallback data untuk error
+    // Fallback data
     $judul = "Berita Tidak Ditemukan";
     $description = "Maaf, berita yang Anda cari tidak ditemukan atau tidak tersedia.";
-    $image_url = $config['BASE_URL'] . $config['DEFAULT_IMAGE'];
-    $current_url = $config['BASE_URL'] . $config['APP_PATH'] . "/?id={$berita_id}&tag=" . $berita_tag;
-    $canonical_url = $config['BASE_URL'] . "/berita/";
+    $image_url = $BASE_URL . "/images/default-news.jpg";
+    $current_url = $BASE_URL . "/berita-detail.php?id=$berita_id&tag=" . urlencode($berita_tag);
+    $app_url = $BASE_URL . "/out/berita";
     $penulis = "Admin";
     $tag = $berita_tag;
-    $formatted_date = date('d F Y');
-    $iso_date = date('c');
+    $tgl_terbit = date('Y-m-d');
 }
 
-// Check if request is from crawler
-$user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-$is_crawler = isCrawler($user_agent);
+// Check if user is a crawler/bot
+$user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+$is_crawler = (
+    strpos($user_agent, 'facebookexternalhit') !== false ||
+    strpos($user_agent, 'twitterbot') !== false ||
+    strpos($user_agent, 'whatsapp') !== false ||
+    strpos($user_agent, 'linkedinbot') !== false ||
+    strpos($user_agent, 'googlebot') !== false ||
+    strpos($user_agent, 'bingbot') !== false ||
+    strpos($user_agent, 'slackbot') !== false ||
+    strpos($user_agent, 'telegrambot') !== false
+);
 
-// If not crawler and not preview mode, redirect to app
-if (!$is_crawler && !$is_preview && $berita && !$error) {
-    header("Location: " . $current_url);
+// If not a crawler and berita exists, redirect to app
+if (!$is_crawler && $berita && !isset($_GET['preview'])) {
+    header("Location: $app_url");
     exit;
 }
 
-// Set appropriate cache headers
-if (!$error) {
-    header('Cache-Control: public, max-age=3600'); // Cache for 1 hour
-} else {
-    header('Cache-Control: no-cache, must-revalidate');
-}
-
+// Format date
+$formatted_date = date('d F Y', strtotime($tgl_terbit));
+$iso_date = date('c', strtotime($tgl_terbit));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -240,64 +139,51 @@ if (!$error) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Primary Meta Tags -->
+    <!-- Basic Meta Tags -->
     <title><?php echo $judul; ?> | Fakultas Sains & Teknologi</title>
-    <meta name="title" content="<?php echo $judul; ?> | Fakultas Sains & Teknologi">
     <meta name="description" content="<?php echo $description; ?>">
-    <meta name="keywords" content="<?php echo $tag; ?>, berita, fakultas sains teknologi, universitas, <?php echo $penulis; ?>">
+    <meta name="keywords" content="<?php echo $tag; ?>, berita, fakultas sains teknologi, <?php echo $penulis; ?>">
     <meta name="author" content="<?php echo $penulis; ?>">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <meta name="language" content="Indonesian">
+    <meta name="robots" content="index, follow">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="<?php echo $canonical_url; ?>">
+    <link rel="canonical" href="<?php echo $current_url; ?>">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph Meta Tags (Facebook, WhatsApp, LinkedIn) -->
     <meta property="og:type" content="article">
-    <meta property="og:url" content="<?php echo $current_url; ?>">
     <meta property="og:title" content="<?php echo $judul; ?>">
     <meta property="og:description" content="<?php echo $description; ?>">
     <meta property="og:image" content="<?php echo $image_url; ?>">
-    <meta property="og:image:secure_url" content="<?php echo str_replace('http://', 'https://', $image_url); ?>">
-    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="<?php echo $judul; ?>">
+    <meta property="og:url" content="<?php echo $current_url; ?>">
     <meta property="og:site_name" content="Fakultas Sains & Teknologi">
     <meta property="og:locale" content="id_ID">
-
-    <!-- Article specific -->
     <meta property="article:published_time" content="<?php echo $iso_date; ?>">
     <meta property="article:modified_time" content="<?php echo $iso_date; ?>">
     <meta property="article:author" content="<?php echo $penulis; ?>">
     <meta property="article:section" content="<?php echo $tag; ?>">
     <meta property="article:tag" content="<?php echo $tag; ?>">
 
-    <!-- Twitter -->
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="<?php echo $current_url; ?>">
+    <meta name="twitter:site" content="@fakultas_saintek">
+    <meta name="twitter:creator" content="@<?php echo strtolower(str_replace(' ', '', $penulis)); ?>">
     <meta name="twitter:title" content="<?php echo $judul; ?>">
     <meta name="twitter:description" content="<?php echo $description; ?>">
     <meta name="twitter:image" content="<?php echo $image_url; ?>">
     <meta name="twitter:image:alt" content="<?php echo $judul; ?>">
-    <meta name="twitter:site" content="@fstuogp">
-    <meta name="twitter:creator" content="@fstuogp">
 
-    <!-- WhatsApp & Telegram specific -->
+    <!-- WhatsApp and Telegram -->
     <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:updated_time" content="<?php echo $iso_date; ?>">
 
-    <!-- Structured Data -->
+    <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
             "@type": "NewsArticle",
-            "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": "<?php echo $current_url; ?>"
-            },
             "headline": "<?php echo addslashes($judul); ?>",
-            "description": "<?php echo addslashes($description); ?>",
             "image": {
                 "@type": "ImageObject",
                 "url": "<?php echo $image_url; ?>",
@@ -315,127 +201,388 @@ if (!$error) {
                 "name": "Fakultas Sains & Teknologi",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "<?php echo $config['BASE_URL']; ?>/images/logo.png",
+                    "url": "<?php echo $BASE_URL; ?>/images/logo.png",
                     "width": 200,
                     "height": 60
                 }
             },
+            "description": "<?php echo addslashes($description); ?>",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "<?php echo $current_url; ?>"
+            },
             "articleSection": "<?php echo addslashes($tag); ?>",
-            "keywords": "<?php echo addslashes($tag); ?>"
+            "articleBody": "<?php echo addslashes($description); ?>"
         }
     </script>
 
-    <!-- Preconnect to external domains -->
-    <link rel="preconnect" href="<?php echo $config['API_URL']; ?>">
-    <link rel="dns-prefetch" href="<?php echo $config['API_URL']; ?>">
-
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo $config['BASE_URL']; ?>/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $config['BASE_URL']; ?>/apple-touch-icon.png">
+    <link rel="icon" href="<?php echo $BASE_URL; ?>/favicon.ico">
+    <link rel="apple-touch-icon" href="<?php echo $BASE_URL; ?>/images/logo-192.png">
 
-    <!-- Minimal CSS for crawler preview -->
+    <!-- Styles -->
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
-            background: #f5f5f5;
         }
 
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
             background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
-        h1 {
-            color: #333;
+        .header h1 {
+            font-size: 1.5rem;
             margin-bottom: 10px;
-            line-height: 1.3;
+            font-weight: 600;
         }
 
-        .meta {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 20px;
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
         }
 
         .content {
-            color: #444;
-            margin: 20px 0;
+            padding: 40px;
         }
 
-        img {
+        .article-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            color: #2d3748;
+        }
+
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .article-image {
+            width: 100%;
             max-width: 100%;
             height: auto;
-            border-radius: 8px;
-            margin: 20px 0;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            color: #2d3748;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
         }
 
         .loading {
             text-align: center;
-            padding: 50px;
-            color: #666;
+            margin: 20px 0;
+            color: #667eea;
         }
 
-        .error {
-            background: #fee;
-            padding: 20px;
-            border-radius: 8px;
-            color: #c00;
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
             text-align: center;
         }
-    </style>
 
-    <?php if (!$error && !$is_crawler && !$is_preview): ?>
-        <!-- Auto redirect for non-crawlers -->
-        <meta http-equiv="refresh" content="0;url=<?php echo htmlspecialchars($current_url); ?>">
-    <?php endif; ?>
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .article-title {
+                font-size: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        /* Loading animation */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
-        <?php if (!$error && $berita): ?>
-            <article>
-                <h1><?php echo $judul; ?></h1>
-                <div class="meta">
-                    <span>Oleh <?php echo $penulis; ?></span> •
-                    <time datetime="<?php echo $iso_date; ?>"><?php echo $formatted_date; ?></time> •
-                    <span><?php echo $tag; ?></span>
-                </div>
+        <?php if ($berita): ?>
+            <!-- Success Content -->
+            <div class="header">
+                <h1>📰 Berita Fakultas</h1>
+                <p>Anda akan dialihkan ke halaman lengkap...</p>
+            </div>
 
-                <?php if (!empty($gambar_berita)): ?>
-                    <img src="<?php echo $image_url; ?>" alt="<?php echo $judul; ?>" loading="lazy">
-                <?php endif; ?>
+            <div class="content">
+                <article>
+                    <h1 class="article-title"><?php echo $judul; ?></h1>
 
-                <div class="content">
-                    <p><?php echo $description; ?></p>
-                </div>
-
-                <?php if (!$is_crawler): ?>
-                    <div class="loading">
-                        <p>Mengalihkan ke halaman lengkap...</p>
+                    <div class="article-meta">
+                        <div class="meta-item">
+                            <span>👤</span>
+                            <span><?php echo $penulis; ?></span>
+                        </div>
+                        <div class="meta-item">
+                            <span>📅</span>
+                            <span><?php echo $formatted_date; ?></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="tag"><?php echo $tag; ?></span>
+                        </div>
                     </div>
-                <?php endif; ?>
-            </article>
+
+                    <?php if (!empty($gambar_berita)): ?>
+                        <img src="<?php echo $image_url; ?>" alt="<?php echo $judul; ?>" class="article-image" loading="lazy">
+                    <?php endif; ?>
+
+                    <div class="article-content">
+                        <p><?php echo $description; ?></p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="<?php echo $app_url; ?>" class="btn btn-primary">
+                            📖 Baca Selengkapnya
+                        </a>
+                        <a href="<?php echo $BASE_URL; ?>/berita" class="btn btn-secondary">
+                            📋 Semua Berita
+                        </a>
+                    </div>
+                </article>
+            </div>
+
         <?php else: ?>
-            <div class="error">
-                <h1>Berita Tidak Ditemukan</h1>
-                <p><?php echo $description; ?></p>
+            <!-- Error Content -->
+            <div class="header">
+                <h1>⚠️ Berita Tidak Ditemukan</h1>
+                <p>Maaf, terjadi kesalahan atau berita tidak tersedia</p>
+            </div>
+
+            <div class="content">
+                <div class="error-message">
+                    <p>Berita yang Anda cari tidak ditemukan atau mungkin telah dihapus.</p>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="<?php echo $BASE_URL; ?>/berita" class="btn btn-primary">
+                        🏠 Kembali ke Beranda
+                    </a>
+                </div>
             </div>
         <?php endif; ?>
     </div>
 
-    <?php if (!$is_crawler && !$is_preview && !$error): ?>
-        <script>
-            // Immediate redirect for JavaScript-enabled browsers
-            window.location.replace('<?php echo $current_url; ?>');
-        </script>
-    <?php endif; ?>
+    <!-- Auto redirect script -->
+    <script>
+        // Show loading state
+        const showLoading = () => {
+            const buttons = document.querySelector('.action-buttons');
+            if (buttons) {
+                buttons.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Mengalihkan ke halaman berita...</p>
+                    </div>
+                `;
+            }
+        };
+
+        // Redirect function
+        const redirectToApp = () => {
+            <?php if ($berita): ?>
+                showLoading();
+                setTimeout(() => {
+                    window.location.href = '<?php echo $app_url; ?>';
+                }, 1500);
+            <?php endif; ?>
+        };
+
+        // Auto redirect after page load (except for crawlers)
+        window.addEventListener('load', () => {
+            // Don't redirect if preview parameter exists
+            if (window.location.search.includes('preview=1')) {
+                return;
+            }
+
+            // Check if user agent is likely a real browser
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isCrawler = (
+                userAgent.includes('facebook') ||
+                userAgent.includes('twitter') ||
+                userAgent.includes('whatsapp') ||
+                userAgent.includes('linkedin') ||
+                userAgent.includes('googlebot') ||
+                userAgent.includes('bot')
+            );
+
+            if (!isCrawler) {
+                redirectToApp();
+            }
+        });
+
+        // Manual redirect on button click
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-primary')) {
+                e.preventDefault();
+                redirectToApp();
+            }
+        });
+
+        // Debug info for development
+        <?php if (isset($_GET['debug'])): ?>
+            console.log('Debug Info:', {
+                berita_id: <?php echo $berita_id; ?>,
+                berita_tag: '<?php echo $berita_tag; ?>',
+                user_agent: navigator.userAgent,
+                is_crawler: <?php echo $is_crawler ? 'true' : 'false'; ?>,
+                current_url: '<?php echo $current_url; ?>',
+                app_url: '<?php echo $app_url; ?>',
+                image_url: '<?php echo $image_url; ?>'
+            });
+        <?php endif; ?>
+    </script>
+
+    <!-- No JavaScript fallback -->
+    <noscript>
+        <meta http-equiv="refresh" content="3;url=<?php echo $app_url; ?>">
+        <style>
+            .loading {
+                display: block !important;
+            }
+        </style>
+    </noscript>
 </body>
 
 </html>
