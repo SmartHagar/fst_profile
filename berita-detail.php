@@ -19,8 +19,11 @@ $config = [
 
 // Get and validate parameters
 $berita_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-$berita_tag = filter_input(INPUT_GET, 'tag', FILTER_SANITIZE_STRING);
+$berita_tag = $_GET['tag'] ?? ''; // Don't use FILTER_SANITIZE_STRING as it may alter the tag
 $is_preview = filter_input(INPUT_GET, 'preview', FILTER_VALIDATE_BOOLEAN);
+
+// Clean tag but preserve original format
+$berita_tag = trim($berita_tag);
 
 // Log untuk debugging (comment di production)
 // file_put_contents('berita-debug.log', date('Y-m-d H:i:s') . " - ID: $berita_id, Tag: $berita_tag\n", FILE_APPEND);
@@ -111,7 +114,7 @@ $berita = null;
 $error = false;
 
 // Build API URL
-$api_endpoint = $config['API_URL'] . "/json/berita/detail/" . $berita_id . "/" . urlencode($berita_tag);
+$api_endpoint = $config['API_URL'] . "/json/berita/detail/" . $berita_id . "/" . $berita_tag;
 $cache_key = "berita_{$berita_id}_{$berita_tag}";
 
 // Fetch berita data
@@ -130,6 +133,24 @@ try {
         $error = true;
         // Log untuk debugging
         error_log("Berita fetch failed - ID: $berita_id, Tag: $berita_tag, Response: " . json_encode($berita));
+
+        // Special handling for Facebook crawler
+        if ($is_crawler && $berita_id && $berita_tag) {
+            // Try alternative API endpoints or create fallback
+            error_log("Facebook crawler detected with no data, creating fallback");
+
+            // Create minimal valid data for crawler
+            $berita = [
+                'id' => $berita_id,
+                'judul' => 'Berita Fakultas Sains & Teknologi',
+                'isi_berita' => 'Klik untuk membaca berita lengkap di website Fakultas Sains & Teknologi.',
+                'gambar_berita' => '',
+                'penulis' => 'Admin FST',
+                'tag' => $berita_tag,
+                'tgl_terbit' => date('Y-m-d')
+            ];
+            $error = false;
+        }
     }
 } catch (Exception $e) {
     $error = true;
@@ -175,7 +196,7 @@ if ($berita && !$error) {
     }
 
     // Build URLs
-    $current_url = $config['BASE_URL'] . $config['APP_PATH'] . "/?id={$berita_id}&tag=" . urlencode($berita_tag);
+    $current_url = $config['BASE_URL'] . $config['APP_PATH'] . "/?id={$berita_id}&tag=" . $berita_tag;
     $canonical_url = $current_url; // Atau gunakan URL SEO-friendly jika ada
 
     // Format dates
@@ -186,7 +207,7 @@ if ($berita && !$error) {
     $judul = "Berita Tidak Ditemukan";
     $description = "Maaf, berita yang Anda cari tidak ditemukan atau tidak tersedia.";
     $image_url = $config['BASE_URL'] . $config['DEFAULT_IMAGE'];
-    $current_url = $config['BASE_URL'] . $config['APP_PATH'] . "/?id={$berita_id}&tag=" . urlencode($berita_tag);
+    $current_url = $config['BASE_URL'] . $config['APP_PATH'] . "/?id={$berita_id}&tag=" . $berita_tag;
     $canonical_url = $config['BASE_URL'] . "/berita/";
     $penulis = "Admin";
     $tag = $berita_tag;

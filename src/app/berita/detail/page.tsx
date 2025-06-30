@@ -303,7 +303,7 @@ function BeritaDetailContent() {
 
   return (
     <BeritaDetailClient
-      params={{ id: id!, tag: tag! }}
+      params={{ id: id! as any, tag: tag! }}
       staticData={beritaDetail}
     />
   );
