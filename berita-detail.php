@@ -1,75 +1,192 @@
 <?php
 
 /** @format */
-// berita-detail.php - Tempatkan di root shared hosting
+// berita-detail.php - Fixed version with proper debug and preview handling
 
 // Configuration
-$BASE_URL = "https://fstuogp.com"; // Ganti dengan domain Anda
-$API_URL = "https://admin.fstuogp.com";     // Ganti dengan API endpoint Anda
+$BASE_URL = "https://fstuogp.com";
+$API_URL = "https://admin.fstuogp.com";
 $APP_URL = "/berita/detail";
 
-// Get parameters
-$berita_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$berita_tag = isset($_GET['tag']) ? $_GET['tag'] : '';
-
-// Validate parameters
-if (!$berita_id || !$berita_tag) {
-    header("Location: $BASE_URL/berita");
-    exit;
+// Debug function
+function debug_log($message, $data = null)
+{
+    if (isset($_GET['debug'])) {
+        error_log("BERITA DEBUG: $message" . ($data ? " - " . json_encode($data) : ""));
+    }
 }
 
-// Initialize variables
-$berita = null;
-$error = false;
+// Enhanced parameter extraction
+function extractParameters()
+{
+    $berita_id = 0;
+    $berita_tag = '';
 
-// Fetch berita data from API
-try {
+    // Method 1: Query parameters (?id=X&tag=Y)
+    if (isset($_GET['id']) && isset($_GET['tag'])) {
+        $berita_id = (int)$_GET['id'];
+        $berita_tag = $_GET['tag'];
+        debug_log("Method 1 - Query params", ['id' => $berita_id, 'tag' => $berita_tag]);
+        return [$berita_id, $berita_tag];
+    }
+
+    // Method 2: Path parameters from .htaccess rewrite (/berita/27/tag-here)
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+    $path = parse_url($request_uri, PHP_URL_PATH);
+
+    // Pattern: /berita/ID/TAG or /berita-detail.php with rewritten params
+    if (preg_match('#^/berita/(\d+)/([^/?]+)#', $path, $matches)) {
+        $berita_id = (int)$matches[1];
+        $berita_tag = $matches[2];
+        debug_log("Method 2 - Path params", ['id' => $berita_id, 'tag' => $berita_tag]);
+        return [$berita_id, $berita_tag];
+    }
+
+    // Method 3: Check if running from Next.js route and extract from URL
+    if (preg_match('#/berita/detail.*[?&]id=(\d+).*[?&]tag=([^&]+)#', $request_uri, $matches)) {
+        $berita_id = (int)$matches[1];
+        $berita_tag = urldecode($matches[2]);
+        debug_log("Method 3 - Next.js route", ['id' => $berita_id, 'tag' => $berita_tag]);
+        return [$berita_id, $berita_tag];
+    }
+
+    // Method 4: Check $_SERVER['QUERY_STRING'] directly
+    $query_string = $_SERVER['QUERY_STRING'] ?? '';
+    if (
+        preg_match('/id=(\d+)/', $query_string, $id_matches) &&
+        preg_match('/tag=([^&]+)/', $query_string, $tag_matches)
+    ) {
+        $berita_id = (int)$id_matches[1];
+        $berita_tag = urldecode($tag_matches[1]);
+        debug_log("Method 4 - Query string direct", ['id' => $berita_id, 'tag' => $berita_tag]);
+        return [$berita_id, $berita_tag];
+    }
+
+    debug_log("No parameters found", ['request_uri' => $request_uri, 'query_string' => $query_string]);
+    return [0, ''];
+}
+
+// Enhanced API call with better error handling
+function fetchBeritaData($berita_id, $berita_tag)
+{
+    global $API_URL;
+
+    if (!$berita_id || !$berita_tag) {
+        debug_log("Invalid parameters for API call");
+        return null;
+    }
+
     $api_url = $API_URL . "/json/berita/detail/" . $berita_id . "/" . urlencode($berita_tag);
+    debug_log("API URL", $api_url);
 
-    // Create context for file_get_contents with timeout
+    // Enhanced context with more options
     $context = stream_context_create([
         'http' => [
-            'timeout' => 10,
+            'timeout' => 15,
             'method' => 'GET',
             'header' => [
                 'Content-Type: application/json',
-                'User-Agent: Mozilla/5.0 (compatible; BeritaCrawler/1.0)'
-            ]
+                'User-Agent: Mozilla/5.0 (compatible; BeritaCrawler/1.0)',
+                'Accept: application/json, text/plain, */*',
+                'Accept-Language: id-ID,id;q=0.9,en;q=0.8',
+                'Cache-Control: no-cache',
+                'Pragma: no-cache'
+            ],
+            'ignore_errors' => true
+        ],
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false
         ]
     ]);
 
-    $response = @file_get_contents($api_url, false, $context);
+    try {
+        $response = @file_get_contents($api_url, false, $context);
 
-    if ($response !== false) {
+        if ($response === false) {
+            $error = error_get_last();
+            debug_log("API call failed", $error);
+            return null;
+        }
+
+        debug_log("API Response length", strlen($response));
+
         $berita = json_decode($response, true);
 
-        // Validate response
-        if (!$berita || !isset($berita['id'])) {
-            $error = true;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            debug_log("JSON decode error", json_last_error_msg());
+            return null;
         }
-    } else {
-        $error = true;
+
+        if (!$berita || !isset($berita['id'])) {
+            debug_log("Invalid berita data", $berita);
+            return null;
+        }
+
+        debug_log("API call successful", ['id' => $berita['id'], 'title' => substr($berita['judul'] ?? '', 0, 50)]);
+        return $berita;
+    } catch (Exception $e) {
+        debug_log("Exception during API call", $e->getMessage());
+        return null;
     }
-} catch (Exception $e) {
-    $error = true;
 }
 
-// If API fails, redirect to app with error handling
-if ($error || !$berita) {
-    // For crawlers, show basic error page with meta tags
+// Check if user is a crawler/bot
+function isCrawler()
+{
     $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
-    $is_crawler = (
+    return (
         strpos($user_agent, 'facebookexternalhit') !== false ||
         strpos($user_agent, 'twitterbot') !== false ||
         strpos($user_agent, 'whatsapp') !== false ||
         strpos($user_agent, 'linkedinbot') !== false ||
-        strpos($user_agent, 'googlebot') !== false
+        strpos($user_agent, 'googlebot') !== false ||
+        strpos($user_agent, 'bingbot') !== false ||
+        strpos($user_agent, 'slackbot') !== false ||
+        strpos($user_agent, 'telegrambot') !== false ||
+        strpos($user_agent, 'bot') !== false ||
+        strpos($user_agent, 'crawler') !== false ||
+        strpos($user_agent, 'spider') !== false
     );
+}
 
-    if (!$is_crawler) {
-        header("Location: $BASE_URL$APP_URL?id=$berita_id&tag=" . urlencode($berita_tag));
+// Check if should show preview (don't redirect)
+function shouldShowPreview()
+{
+    return (
+        isset($_GET['preview']) ||
+        isset($_GET['debug']) ||
+        isCrawler()
+    );
+}
+
+// Get parameters
+list($berita_id, $berita_tag) = extractParameters();
+
+debug_log("Extracted parameters", ['id' => $berita_id, 'tag' => $berita_tag]);
+debug_log("User Agent", $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown');
+debug_log("Is Crawler", isCrawler());
+debug_log("Should Show Preview", shouldShowPreview());
+
+// Validate parameters
+if (!$berita_id || !$berita_tag) {
+    debug_log("Redirecting due to invalid parameters");
+    if (!isset($_GET['debug'])) {
+        header("Location: $BASE_URL/berita");
         exit;
     }
+}
+
+// Fetch berita data from API
+$berita = fetchBeritaData($berita_id, $berita_tag);
+$error = ($berita === null);
+
+// If API fails and not in preview mode, redirect to app
+if ($error && !shouldShowPreview()) {
+    $app_url = $BASE_URL . $APP_URL . "?id=$berita_id&tag=" . urlencode($berita_tag);
+    debug_log("API failed, redirecting to app", $app_url);
+    header("Location: $app_url");
+    exit;
 }
 
 // Prepare data for meta tags
@@ -97,33 +214,34 @@ if ($berita) {
     // Page URLs
     $current_url = $BASE_URL . "/berita-detail.php?id=$berita_id&tag=" . urlencode($berita_tag);
     $app_url = $BASE_URL . $APP_URL . "?id=$berita_id&tag=" . urlencode($berita_tag);
+
+    debug_log("Meta data prepared", [
+        'title' => substr($judul, 0, 50),
+        'description' => substr($description, 0, 50),
+        'image_url' => $image_url,
+        'current_url' => $current_url,
+        'app_url' => $app_url
+    ]);
 } else {
     // Fallback data
     $judul = "Berita Tidak Ditemukan";
     $description = "Maaf, berita yang Anda cari tidak ditemukan atau tidak tersedia.";
     $image_url = $BASE_URL . "/images/default-news.jpg";
     $current_url = $BASE_URL . "/berita-detail.php?id=$berita_id&tag=" . urlencode($berita_tag);
-    $app_url = $BASE_URL . "/out/berita";
+    $app_url = $BASE_URL . "/berita";
     $penulis = "Admin";
     $tag = $berita_tag;
     $tgl_terbit = date('Y-m-d');
+
+    debug_log("Using fallback data");
 }
 
-// Check if user is a crawler/bot
-$user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
-$is_crawler = (
-    strpos($user_agent, 'facebookexternalhit') !== false ||
-    strpos($user_agent, 'twitterbot') !== false ||
-    strpos($user_agent, 'whatsapp') !== false ||
-    strpos($user_agent, 'linkedinbot') !== false ||
-    strpos($user_agent, 'googlebot') !== false ||
-    strpos($user_agent, 'bingbot') !== false ||
-    strpos($user_agent, 'slackbot') !== false ||
-    strpos($user_agent, 'telegrambot') !== false
-);
+// Check if we should redirect to app
+$should_redirect = !shouldShowPreview() && $berita;
 
-// If not a crawler and berita exists, redirect to app
-if (!$is_crawler && $berita && !isset($_GET['preview'])) {
+// If not a crawler/debug/preview and berita exists, redirect to app
+if ($should_redirect) {
+    debug_log("Redirecting to app");
     header("Location: $app_url");
     exit;
 }
@@ -131,6 +249,13 @@ if (!$is_crawler && $berita && !isset($_GET['preview'])) {
 // Format date
 $formatted_date = date('d F Y', strtotime($tgl_terbit));
 $iso_date = date('c', strtotime($tgl_terbit));
+
+debug_log("Page rendering", [
+    'is_crawler' => isCrawler(),
+    'has_berita' => !!$berita,
+    'should_redirect' => $should_redirect,
+    'preview_mode' => shouldShowPreview()
+]);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -175,9 +300,6 @@ $iso_date = date('c', strtotime($tgl_terbit));
     <meta name="twitter:image" content="<?php echo $image_url; ?>">
     <meta name="twitter:image:alt" content="<?php echo $judul; ?>">
 
-    <!-- WhatsApp and Telegram -->
-    <meta property="og:image:type" content="image/jpeg">
-
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
         {
@@ -220,7 +342,7 @@ $iso_date = date('c', strtotime($tgl_terbit));
     <link rel="icon" href="<?php echo $BASE_URL; ?>/favicon.ico">
     <link rel="apple-touch-icon" href="<?php echo $BASE_URL; ?>/images/logo-192.png">
 
-    <!-- Styles -->
+    <!-- CSS styles remain the same as original -->
     <style>
         * {
             margin: 0;
@@ -391,6 +513,29 @@ $iso_date = date('c', strtotime($tgl_terbit));
             text-align: center;
         }
 
+        .debug-info {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .debug-info h3 {
+            margin-top: 0;
+            color: #2d3748;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .debug-info pre {
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -414,7 +559,6 @@ $iso_date = date('c', strtotime($tgl_terbit));
             }
         }
 
-        /* Loading animation */
         .spinner {
             width: 40px;
             height: 40px;
@@ -434,16 +578,68 @@ $iso_date = date('c', strtotime($tgl_terbit));
                 transform: rotate(360deg);
             }
         }
+
+        .preview-notice {
+            background: #edf2ae;
+            border: 1px solid #c6d84f;
+            color: #5a6b0b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <?php if (isset($_GET['debug'])): ?>
+            <div class="debug-info">
+                <h3>🔍 Debug Information</h3>
+                <pre>
+Request URI: <?php echo $_SERVER['REQUEST_URI'] ?? 'N/A'; ?>
+Query String: <?php echo $_SERVER['QUERY_STRING'] ?? 'N/A'; ?>
+User Agent: <?php echo substr($_SERVER['HTTP_USER_AGENT'] ?? 'N/A', 0, 100); ?>...
+                    
+Is Crawler: <?php echo isCrawler() ? '✅ Yes' : '❌ No'; ?>
+Should Show Preview: <?php echo shouldShowPreview() ? '✅ Yes' : '❌ No'; ?>
+Should Redirect: <?php echo $should_redirect ? '✅ Yes' : '❌ No'; ?>
+
+Berita ID: <?php echo $berita_id; ?>
+Berita Tag: <?php echo $berita_tag; ?>
+
+API URL: <?php echo $API_URL . "/json/berita/detail/" . $berita_id . "/" . urlencode($berita_tag); ?>
+API Response: <?php echo $berita ? '✅ Success' : '❌ Failed'; ?>
+Has Berita Data: <?php echo $berita ? '✅ Yes' : '❌ No'; ?>
+
+Current URL: <?php echo $current_url; ?>
+App URL: <?php echo $app_url; ?>
+Image URL: <?php echo $image_url; ?>
+
+Preview Parameters:
+- debug=<?php echo isset($_GET['debug']) ? $_GET['debug'] : 'not set'; ?>
+- preview=<?php echo isset($_GET['preview']) ? $_GET['preview'] : 'not set'; ?>
+                </pre>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['preview']) || isset($_GET['debug'])): ?>
+            <div class="preview-notice">
+                <strong>🔍 Preview Mode</strong> - Automatic redirect disabled
+            </div>
+        <?php endif; ?>
+
         <?php if ($berita): ?>
             <!-- Success Content -->
             <div class="header">
                 <h1>📰 Berita Fakultas</h1>
-                <p>Anda akan dialihkan ke halaman lengkap...</p>
+                <p>
+                    <?php if (!isset($_GET['preview']) && !isset($_GET['debug'])): ?>
+                        Anda akan dialihkan ke halaman lengkap...
+                    <?php else: ?>
+                        Preview mode - Meta tags loaded successfully
+                    <?php endif; ?>
+                </p>
             </div>
 
             <div class="content">
@@ -493,20 +689,29 @@ $iso_date = date('c', strtotime($tgl_terbit));
             <div class="content">
                 <div class="error-message">
                     <p>Berita yang Anda cari tidak ditemukan atau mungkin telah dihapus.</p>
+                    <?php if (isset($_GET['debug'])): ?>
+                        <p><small>Debug: ID=<?php echo $berita_id; ?>, Tag=<?php echo $berita_tag; ?></small></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="action-buttons">
                     <a href="<?php echo $BASE_URL; ?>/berita" class="btn btn-primary">
                         🏠 Kembali ke Beranda
                     </a>
+                    <a href="<?php echo $app_url; ?>" class="btn btn-secondary">
+                        🔄 Coba Lagi
+                    </a>
                 </div>
             </div>
         <?php endif; ?>
     </div>
 
-    <!-- Auto redirect script -->
+    <!-- Auto redirect script (only if not in preview/debug mode) -->
     <script>
-        // Show loading state
+        const isDebugMode = <?php echo isset($_GET['debug']) ? 'true' : 'false'; ?>;
+        const isPreviewMode = <?php echo isset($_GET['preview']) ? 'true' : 'false'; ?>;
+        const hasBerita = <?php echo $berita ? 'true' : 'false'; ?>;
+
         const showLoading = () => {
             const buttons = document.querySelector('.action-buttons');
             if (buttons) {
@@ -519,24 +724,16 @@ $iso_date = date('c', strtotime($tgl_terbit));
             }
         };
 
-        // Redirect function
         const redirectToApp = () => {
-            <?php if ($berita): ?>
+            if (hasBerita && !isDebugMode && !isPreviewMode) {
                 showLoading();
                 setTimeout(() => {
                     window.location.href = '<?php echo $app_url; ?>';
                 }, 1500);
-            <?php endif; ?>
+            }
         };
 
-        // Auto redirect after page load (except for crawlers)
         window.addEventListener('load', () => {
-            // Don't redirect if preview parameter exists
-            if (window.location.search.includes('preview=1')) {
-                return;
-            }
-
-            // Check if user agent is likely a real browser
             const userAgent = navigator.userAgent.toLowerCase();
             const isCrawler = (
                 userAgent.includes('facebook') ||
@@ -544,45 +741,56 @@ $iso_date = date('c', strtotime($tgl_terbit));
                 userAgent.includes('whatsapp') ||
                 userAgent.includes('linkedin') ||
                 userAgent.includes('googlebot') ||
-                userAgent.includes('bot')
+                userAgent.includes('bot') ||
+                userAgent.includes('crawler') ||
+                userAgent.includes('spider')
             );
 
-            if (!isCrawler) {
+            // Only redirect if not crawler, not debug, not preview
+            if (!isCrawler && !isDebugMode && !isPreviewMode) {
                 redirectToApp();
             }
         });
 
-        // Manual redirect on button click
+        // Handle manual click on "Baca Selengkapnya"
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.btn-primary')) {
+            if (e.target.closest('.btn-primary') && !isDebugMode && !isPreviewMode) {
                 e.preventDefault();
-                redirectToApp();
+                showLoading();
+                setTimeout(() => {
+                    window.location.href = '<?php echo $app_url; ?>';
+                }, 500);
             }
         });
 
-        // Debug info for development
+        // Debug console logging
         <?php if (isset($_GET['debug'])): ?>
-            console.log('Debug Info:', {
+            console.log('🔍 Debug Info:', {
                 berita_id: <?php echo $berita_id; ?>,
                 berita_tag: '<?php echo $berita_tag; ?>',
                 user_agent: navigator.userAgent,
-                is_crawler: <?php echo $is_crawler ? 'true' : 'false'; ?>,
+                is_crawler: <?php echo isCrawler() ? 'true' : 'false'; ?>,
+                should_show_preview: <?php echo shouldShowPreview() ? 'true' : 'false'; ?>,
                 current_url: '<?php echo $current_url; ?>',
                 app_url: '<?php echo $app_url; ?>',
-                image_url: '<?php echo $image_url; ?>'
+                image_url: '<?php echo $image_url; ?>',
+                has_berita: <?php echo $berita ? 'true' : 'false'; ?>,
+                debug_mode: isDebugMode,
+                preview_mode: isPreviewMode
             });
+
+            // Log API response if available
+            <?php if ($berita): ?>
+                console.log('📰 Berita Data:', <?php echo json_encode($berita); ?>);
+            <?php endif; ?>
         <?php endif; ?>
     </script>
 
-    <!-- No JavaScript fallback -->
-    <noscript>
-        <meta http-equiv="refresh" content="3;url=<?php echo $app_url; ?>">
-        <style>
-            .loading {
-                display: block !important;
-            }
-        </style>
-    </noscript>
+    <?php if (!isset($_GET['debug']) && !isset($_GET['preview'])): ?>
+        <noscript>
+            <meta http-equiv="refresh" content="3;url=<?php echo $app_url; ?>">
+        </noscript>
+    <?php endif; ?>
 </body>
 
 </html>
