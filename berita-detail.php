@@ -15,7 +15,6 @@ if (isset($_GET['debug'])) {
     error_log("=== BERITA DEBUG END ===");
 }
 
-
 // Configuration
 $BASE_URL = "https://fstuogp.com";
 $API_URL = "https://admin.fstuogp.com";
@@ -79,7 +78,7 @@ function extractParameters()
     return [0, ''];
 }
 
-// Enhanced API call with better error handling
+// Enhanced API call with better error handling and debugging
 function fetchBeritaData($berita_id, $berita_tag)
 {
     global $API_URL;
@@ -95,7 +94,7 @@ function fetchBeritaData($berita_id, $berita_tag)
     // Enhanced context with more options
     $context = stream_context_create([
         'http' => [
-            'timeout' => 15,
+            'timeout' => 30, // Increased timeout
             'method' => 'GET',
             'header' => [
                 'Content-Type: application/json',
@@ -103,43 +102,148 @@ function fetchBeritaData($berita_id, $berita_tag)
                 'Accept: application/json, text/plain, */*',
                 'Accept-Language: id-ID,id;q=0.9,en;q=0.8',
                 'Cache-Control: no-cache',
-                'Pragma: no-cache'
+                'Pragma: no-cache',
+                'Connection: keep-alive',
+                'Accept-Encoding: gzip, deflate, br'
             ],
-            'ignore_errors' => true
+            'ignore_errors' => true,
+            'follow_location' => true,
+            'max_redirects' => 5
         ],
         'ssl' => [
             'verify_peer' => false,
-            'verify_peer_name' => false
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
+            'SNI_enabled' => true
         ]
     ]);
 
     try {
+        // Debug: Test URL accessibility with curl if available
+        if (isset($_GET['debug']) && function_exists('curl_init')) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $api_url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_NOBODY, false);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Accept: application/json',
+                'User-Agent: Mozilla/5.0 (compatible; BeritaCrawler/1.0)'
+            ]);
+
+            $curl_response = curl_exec($ch);
+            $curl_info = curl_getinfo($ch);
+            $curl_error = curl_error($ch);
+            curl_close($ch);
+
+            debug_log("CURL Debug Info", [
+                'http_code' => $curl_info['http_code'],
+                'total_time' => $curl_info['total_time'],
+                'error' => $curl_error,
+                'url' => $curl_info['url']
+            ]);
+
+            if ($curl_response) {
+                $header_size = $curl_info['header_size'];
+                $headers = substr($curl_response, 0, $header_size);
+                $body = substr($curl_response, $header_size);
+                debug_log("CURL Response Headers", explode("\n", trim($headers)));
+                debug_log("CURL Response Body Preview", substr($body, 0, 500));
+            }
+        }
+
         $response = @file_get_contents($api_url, false, $context);
+
+        // Get response headers
+        if (isset($http_response_header)) {
+            debug_log("HTTP Response Headers", $http_response_header);
+        }
 
         if ($response === false) {
             $error = error_get_last();
             debug_log("API call failed", $error);
-            return null;
+
+            // Try alternative approaches
+            if (function_exists('curl_init')) {
+                debug_log("Trying with CURL as fallback");
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $api_url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Accept: application/json',
+                    'User-Agent: Mozilla/5.0 (compatible; BeritaCrawler/1.0)'
+                ]);
+
+                $response = curl_exec($ch);
+                $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $curl_error = curl_error($ch);
+                curl_close($ch);
+
+                debug_log("CURL Fallback Result", [
+                    'http_code' => $http_code,
+                    'error' => $curl_error,
+                    'response_length' => strlen($response)
+                ]);
+
+                if (!$response) {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
 
         debug_log("API Response length", strlen($response));
+        debug_log("API Response preview", substr($response, 0, 500));
 
+        // Try to decode response
         $berita = json_decode($response, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            debug_log("JSON decode error", json_last_error_msg());
+            debug_log("JSON decode error", [
+                'error' => json_last_error_msg(),
+                'error_code' => json_last_error()
+            ]);
+
+            // Check if response is HTML instead of JSON
+            if (strpos($response, '<html') !== false || strpos($response, '<!DOCTYPE') !== false) {
+                debug_log("Response is HTML, not JSON");
+            }
+
             return null;
         }
 
         if (!$berita || !isset($berita['id'])) {
-            debug_log("Invalid berita data", $berita);
+            debug_log("Invalid berita data structure", [
+                'has_data' => !empty($berita),
+                'keys' => $berita ? array_keys($berita) : []
+            ]);
             return null;
         }
 
-        debug_log("API call successful", ['id' => $berita['id'], 'title' => substr($berita['judul'] ?? '', 0, 50)]);
+        debug_log("API call successful", [
+            'id' => $berita['id'],
+            'title' => substr($berita['judul'] ?? '', 0, 50),
+            'has_content' => !empty($berita['isi_berita']),
+            'has_image' => !empty($berita['gambar_berita'])
+        ]);
+
         return $berita;
     } catch (Exception $e) {
-        debug_log("Exception during API call", $e->getMessage());
+        debug_log("Exception during API call", [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]);
         return null;
     }
 }
@@ -549,6 +653,19 @@ debug_log("Page rendering", [
             word-wrap: break-word;
         }
 
+        .debug-section {
+            margin: 15px 0;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 5px;
+        }
+
+        .debug-section h4 {
+            margin: 0 0 10px 0;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -609,30 +726,62 @@ debug_log("Page rendering", [
         <?php if (isset($_GET['debug'])): ?>
             <div class="debug-info">
                 <h3>🔍 Debug Information</h3>
-                <pre>
-Request URI: <?php echo $_SERVER['REQUEST_URI'] ?? 'N/A'; ?>
+
+                <div class="debug-section">
+                    <h4>Request Information</h4>
+                    <pre>Request URI: <?php echo $_SERVER['REQUEST_URI'] ?? 'N/A'; ?>
 Query String: <?php echo $_SERVER['QUERY_STRING'] ?? 'N/A'; ?>
 User Agent: <?php echo substr($_SERVER['HTTP_USER_AGENT'] ?? 'N/A', 0, 100); ?>...
                     
 Is Crawler: <?php echo isCrawler() ? '✅ Yes' : '❌ No'; ?>
 Should Show Preview: <?php echo shouldShowPreview() ? '✅ Yes' : '❌ No'; ?>
-Should Redirect: <?php echo $should_redirect ? '✅ Yes' : '❌ No'; ?>
+Should Redirect: <?php echo $should_redirect ? '✅ Yes' : '❌ No'; ?></pre>
+                </div>
 
-Berita ID: <?php echo $berita_id; ?>
-Berita Tag: <?php echo $berita_tag; ?>
+                <div class="debug-section">
+                    <h4>Parameters</h4>
+                    <pre>Berita ID: <?php echo $berita_id; ?>
+Berita Tag: <?php echo $berita_tag; ?></pre>
+                </div>
 
-API URL: <?php echo $API_URL . "/json/berita/detail/" . $berita_id . "/" . urlencode($berita_tag); ?>
+                <div class="debug-section">
+                    <h4>API Information</h4>
+                    <pre>API URL: <?php echo $API_URL . "/json/berita/detail/" . $berita_id . "/" . urlencode($berita_tag); ?>
 API Response: <?php echo $berita ? '✅ Success' : '❌ Failed'; ?>
 Has Berita Data: <?php echo $berita ? '✅ Yes' : '❌ No'; ?>
 
 Current URL: <?php echo $current_url; ?>
 App URL: <?php echo $app_url; ?>
-Image URL: <?php echo $image_url; ?>
+Image URL: <?php echo $image_url; ?></pre>
+                </div>
 
-Preview Parameters:
-- debug=<?php echo isset($_GET['debug']) ? $_GET['debug'] : 'not set'; ?>
-- preview=<?php echo isset($_GET['preview']) ? $_GET['preview'] : 'not set'; ?>
-                </pre>
+                <div class="debug-section">
+                    <h4>Debug Parameters</h4>
+                    <pre>debug=<?php echo isset($_GET['debug']) ? $_GET['debug'] : 'not set'; ?>
+preview=<?php echo isset($_GET['preview']) ? $_GET['preview'] : 'not set'; ?></pre>
+                </div>
+
+                <?php if (function_exists('curl_version')): ?>
+                    <div class="debug-section">
+                        <h4>CURL Support</h4>
+                        <pre>CURL Available: ✅ Yes
+CURL Version: <?php $curl_info = curl_version();
+                    echo $curl_info['version']; ?>
+SSL Version: <?php echo $curl_info['ssl_version']; ?></pre>
+                    </div>
+                <?php else: ?>
+                    <div class="debug-section">
+                        <h4>CURL Support</h4>
+                        <pre>CURL Available: ❌ No</pre>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($berita): ?>
+                    <div class="debug-section">
+                        <h4>Berita Data Structure</h4>
+                        <pre><?php echo json_encode(array_keys($berita), JSON_PRETTY_PRINT); ?></pre>
+                    </div>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 
