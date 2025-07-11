@@ -10,8 +10,8 @@ interface BeritaContentProps {
 
 const BeritaContent = ({ content, className = "" }: BeritaContentProps) => {
   return (
-    <div
-      className={`mt-6 prose prose-lg max-w-none ${className}`}
+    <article
+      className={`prose lg:prose-xl prose-img:rounded-xl prose-img:-mb-6 prose-img:mt-0 max-w-none ${className}`}
       dangerouslySetInnerHTML={{ __html: content }}
     />
   );
