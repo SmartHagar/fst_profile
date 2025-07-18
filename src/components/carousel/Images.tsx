@@ -22,6 +22,10 @@ const ImagesCarousel: React.FC = () => {
     setSlide();
   }, [setSlide]);
 
+  if (dataSlide?.length === 0) {
+    return null;
+  }
+
   return (
     <Swiper
       spaceBetween={30}

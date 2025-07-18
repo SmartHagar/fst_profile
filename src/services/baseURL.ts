@@ -5,6 +5,7 @@ import axios from "axios";
 const BASE_URL = "https://admin.fstuogp.com";
 // const BASE_URL = "http://127.0.0.1:8000";
 const BASE_URL_SIAKAD = "https://back-siakad.fstuogp.com";
+// const BASE_URL_SIAKAD = "http://127.0.0.1:8010";
 const url_auth = `${BASE_URL}/auth`;
 const url_api = `${BASE_URL}/json`;
 const url_storage = `${BASE_URL}/storage`;
