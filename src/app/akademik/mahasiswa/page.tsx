@@ -10,6 +10,7 @@ import ScrollRevealComponent from "@/components/effects/ScrollRevealComponent";
 import { Users, Info, Eye, AlertCircle } from "lucide-react";
 import { MahasiswaType } from "@/types/mahasiswa.types";
 import { scrollToContent } from "@/utils/scroll.utils";
+import Image from "next/image";
 
 const MahasiswaPage = () => {
   const [showMahasiswaDetail, setShowMahasiswaDetail] =
@@ -275,9 +276,11 @@ const MahasiswaPage = () => {
                 {/* Photo */}
                 <div className="flex-shrink-0">
                   {showMahasiswaDetail.img_mhs ? (
-                    <img
+                    <Image
                       src={`https://back-siakad.fstuogp.com/storage/${showMahasiswaDetail.img_mhs}`}
                       alt={showMahasiswaDetail.nm_mhs}
+                      width={100}
+                      height={100}
                       className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";

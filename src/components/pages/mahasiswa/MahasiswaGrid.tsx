@@ -5,13 +5,8 @@ import React from "react";
 import { MahasiswaType, MahasiswaResponse } from "@/types/mahasiswa.types";
 import MahasiswaCard from "./MahasiswaCard";
 import ScrollRevealComponent from "@/components/effects/ScrollRevealComponent";
-import {
-  Users,
-  GraduationCap,
-  ChevronLeft,
-  ChevronRight,
-  MoreHorizontal,
-} from "lucide-react";
+import { Users, GraduationCap } from "lucide-react";
+import Paginate from "@/components/pagination/Paginate";
 
 interface MahasiswaGridProps {
   mahasiswaData: MahasiswaResponse | null;
@@ -27,6 +22,7 @@ const MahasiswaGrid: React.FC<MahasiswaGridProps> = ({
   onPageChange,
 }) => {
   const mahasiswaList = mahasiswaData?.data || [];
+  console.log({ mahasiswaData });
 
   // Group by prodi for additional stats
   const prodiStats = mahasiswaList.reduce((acc, mhs) => {
@@ -36,125 +32,6 @@ const MahasiswaGrid: React.FC<MahasiswaGridProps> = ({
   }, {} as Record<string, number>);
 
   const totalProdi = Object.keys(prodiStats).length;
-
-  // Pagination component
-  const PaginationComponent = () => {
-    if (!mahasiswaData || mahasiswaData.last_page <= 1) return null;
-
-    const currentPage = mahasiswaData.current_page;
-    const totalPages = mahasiswaData.last_page;
-    const maxVisiblePages = 5;
-
-    const getVisiblePages = () => {
-      const pages = [];
-      let startPage = Math.max(
-        1,
-        currentPage - Math.floor(maxVisiblePages / 2)
-      );
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-      // Adjust start page if we're near the end
-      if (endPage - startPage + 1 < maxVisiblePages) {
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-
-      return pages;
-    };
-
-    const visiblePages = getVisiblePages();
-
-    return (
-      <div className="flex items-center justify-between mt-6">
-        {/* Pagination Info */}
-        <div className="text-sm text-gray-600">
-          Menampilkan {mahasiswaData.from} - {mahasiswaData.to} dari{" "}
-          {mahasiswaData.total} mahasiswa
-        </div>
-
-        {/* Pagination Controls */}
-        <div className="flex items-center space-x-1">
-          {/* Previous Button */}
-          <button
-            onClick={() => onPageChange?.(currentPage - 1)}
-            disabled={!mahasiswaData.prev_page_url || loading}
-            className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <ChevronLeft className="w-4 h-4 mr-1" />
-            Previous
-          </button>
-
-          {/* Page Numbers */}
-          <div className="flex items-center space-x-1">
-            {/* First page if not visible */}
-            {visiblePages[0] > 1 && (
-              <>
-                <button
-                  onClick={() => onPageChange?.(1)}
-                  disabled={loading}
-                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50"
-                >
-                  1
-                </button>
-                {visiblePages[0] > 2 && (
-                  <span className="px-2 py-2 text-gray-500">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </span>
-                )}
-              </>
-            )}
-
-            {/* Visible page numbers */}
-            {visiblePages.map((page) => (
-              <button
-                key={page}
-                onClick={() => onPageChange?.(page)}
-                disabled={loading}
-                className={`px-3 py-2 text-sm font-medium rounded-lg border disabled:opacity-50 ${
-                  page === currentPage
-                    ? "text-blue-600 bg-blue-50 border-blue-300"
-                    : "text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-
-            {/* Last page if not visible */}
-            {visiblePages[visiblePages.length - 1] < totalPages && (
-              <>
-                {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-                  <span className="px-2 py-2 text-gray-500">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </span>
-                )}
-                <button
-                  onClick={() => onPageChange?.(totalPages)}
-                  disabled={loading}
-                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50"
-                >
-                  {totalPages}
-                </button>
-              </>
-            )}
-          </div>
-
-          {/* Next Button */}
-          <button
-            onClick={() => onPageChange?.(currentPage + 1)}
-            disabled={!mahasiswaData.next_page_url || loading}
-            className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-            <ChevronRight className="w-4 h-4 ml-1" />
-          </button>
-        </div>
-      </div>
-    );
-  };
 
   // Loading state
   if (loading) {
@@ -275,7 +152,12 @@ const MahasiswaGrid: React.FC<MahasiswaGridProps> = ({
 
       {/* Pagination */}
       <ScrollRevealComponent animations="fade-up" delay={300}>
-        <PaginationComponent />
+        <Paginate
+          setPage={onPageChange}
+          current_page={mahasiswaData?.current_page || 1}
+          last_page={mahasiswaData?.last_page || 1}
+          total={mahasiswaData?.total || 0}
+        />
       </ScrollRevealComponent>
     </div>
   );

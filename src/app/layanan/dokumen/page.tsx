@@ -95,6 +95,8 @@ const DokumenPage = () => {
     setCurrentPage(1);
   };
 
+  console.log({ dataDokumen });
+
   return (
     <main className="container mx-auto px-4 py-8 space-y-8">
       {/* Header Section */}
@@ -233,7 +235,9 @@ const DokumenPage = () => {
             <ScrollRevealComponent animations="fade-up">
               <div className="flex justify-center mt-12">
                 <Paginate
-                  responses={{ data: { meta: dataDokumen.meta } }}
+                  current_page={dataDokumen.current_page}
+                  last_page={dataDokumen.last_page}
+                  total={dataDokumen.total}
                   setPage={setCurrentPage}
                   className="w-full"
                 />

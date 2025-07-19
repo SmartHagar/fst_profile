@@ -6,35 +6,24 @@
 
 import React from "react";
 
-interface PaginationMeta {
+interface PaginateProps {
   current_page: number;
   last_page: number;
-  per_page: number;
   total: number;
-}
-
-interface PaginateProps {
-  responses: {
-    data?: {
-      meta?: PaginationMeta;
-    };
-  };
-  setPage: (page: number) => void;
+  setPage?: (page: number) => void;
   className?: string;
 }
 
 const Paginate: React.FC<PaginateProps> = ({
-  responses,
+  current_page,
+  last_page,
+  total,
   setPage,
   className = "",
 }) => {
-  const meta = responses?.data?.meta;
-
-  if (!meta || meta.last_page <= 1) {
+  if (last_page <= 1) {
     return null;
   }
-
-  const { current_page, last_page, total } = meta;
 
   // Generate page numbers to show
   const getPageNumbers = () => {
@@ -74,19 +63,19 @@ const Paginate: React.FC<PaginateProps> = ({
 
   const handlePageClick = (page: number | string) => {
     if (typeof page === "number" && page !== current_page) {
-      setPage(page);
+      setPage?.(page);
     }
   };
 
   const handlePrevious = () => {
     if (current_page > 1) {
-      setPage(current_page - 1);
+      setPage?.(current_page - 1);
     }
   };
 
   const handleNext = () => {
     if (current_page < last_page) {
-      setPage(current_page + 1);
+      setPage?.(current_page + 1);
     }
   };
 
@@ -101,7 +90,7 @@ const Paginate: React.FC<PaginateProps> = ({
       </div>
 
       {/* Pagination Controls */}
-      <div className="join">
+      <div className="join hidden sm:block">
         {/* Previous Button */}
         <button
           onClick={handlePrevious}
@@ -129,7 +118,7 @@ const Paginate: React.FC<PaginateProps> = ({
         {pageNumbers.map((page, index) => (
           <React.Fragment key={index}>
             {page === "..." ? (
-              <button className="join-item btn btn-sm btn-disabled">...</button>
+              <button className="join-item btn btn-sm ">...</button>
             ) : (
               <button
                 onClick={() => handlePageClick(page)}
@@ -196,7 +185,7 @@ const Paginate: React.FC<PaginateProps> = ({
           <span className="text-sm text-base-content/60">Halaman</span>
           <select
             value={current_page}
-            onChange={(e) => setPage(Number(e.target.value))}
+            onChange={(e) => setPage?.(Number(e.target.value))}
             className="select select-sm select-bordered w-20"
           >
             {Array.from({ length: last_page }, (_, i) => (
@@ -243,7 +232,7 @@ const Paginate: React.FC<PaginateProps> = ({
             if (e.key === "Enter") {
               const value = parseInt((e.target as HTMLInputElement).value);
               if (value >= 1 && value <= last_page) {
-                setPage(value);
+                setPage?.(value);
                 (e.target as HTMLInputElement).value = "";
               }
             }
@@ -258,21 +247,18 @@ export default Paginate;
 
 // Simple Pagination (minimal version)
 export const SimplePaginate: React.FC<PaginateProps> = ({
-  responses,
   setPage,
+  current_page,
+  last_page,
 }) => {
-  const meta = responses?.data?.meta;
-
-  if (!meta || meta.last_page <= 1) {
+  if (last_page <= 1) {
     return null;
   }
-
-  const { current_page, last_page } = meta;
 
   return (
     <div className="join">
       <button
-        onClick={() => setPage(current_page - 1)}
+        onClick={() => setPage?.(current_page - 1)}
         disabled={current_page === 1}
         className="join-item btn"
       >
@@ -280,7 +266,7 @@ export const SimplePaginate: React.FC<PaginateProps> = ({
       </button>
       <button className="join-item btn btn-active">{current_page}</button>
       <button
-        onClick={() => setPage(current_page + 1)}
+        onClick={() => setPage?.(current_page + 1)}
         disabled={current_page === last_page}
         className="join-item btn"
       >

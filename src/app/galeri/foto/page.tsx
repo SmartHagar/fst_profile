@@ -151,7 +151,12 @@ const GaleriPage = () => {
           {dataGaleri.data?.meta && (
             <ScrollRevealComponent animations="fade-up">
               <div className="flex justify-center">
-                <Paginate responses={dataGaleri} setPage={setPage} />
+                <Paginate
+                  current_page={dataGaleri.data.meta.current_page}
+                  last_page={dataGaleri.data.meta.last_page}
+                  total={dataGaleri.data.meta.total}
+                  setPage={setPage}
+                />
               </div>
             </ScrollRevealComponent>
           )}

@@ -166,7 +166,12 @@ const VideoPage = () => {
           {dataVideo.data?.meta && (
             <ScrollRevealComponent animations="fade-up">
               <div className="flex justify-center">
-                <Paginate responses={dataVideo} setPage={setPage} />
+                <Paginate
+                  current_page={dataVideo.data.meta.current_page}
+                  last_page={dataVideo.data.meta.last_page}
+                  total={dataVideo.data.meta.total}
+                  setPage={setPage}
+                />
               </div>
             </ScrollRevealComponent>
           )}

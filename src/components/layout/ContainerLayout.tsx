@@ -8,7 +8,6 @@ import Footer from "../footer/Footer";
 
 const ContainerLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <main className="flex flex-col min-h-screen">
       {pathname === "/dashboard/" ? <BennerEnhanced /> : null}

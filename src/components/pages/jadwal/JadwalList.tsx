@@ -99,7 +99,9 @@ const JadwalList: React.FC = () => {
         <ScrollRevealComponent animations="fade-up" delay={200}>
           <div className="mt-8">
             <Paginate
-              responses={{ data: { meta: dataJadwal } }}
+              current_page={dataJadwal.current_page}
+              last_page={dataJadwal.last_page}
+              total={dataJadwal.total}
               setPage={changePage}
               className="justify-center"
             />

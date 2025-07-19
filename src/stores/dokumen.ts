@@ -8,14 +8,12 @@ import { DokumenType } from "@/types";
 
 interface DokumenResponse {
   data: DokumenType[];
-  meta?: {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    from: number;
-    to: number;
-  };
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
 }
 
 interface DokumenState {
@@ -45,7 +43,15 @@ interface DokumenState {
 const useDokumen = create<DokumenState>()(
   devtools(
     (set) => ({
-      dataDokumen: { data: [] },
+      dataDokumen: {
+        data: [],
+        current_page: 1,
+        last_page: 1,
+        per_page: 1,
+        total: 1,
+        from: 1,
+        to: 1,
+      },
       loading: false,
       error: null,
       currentPage: 1,
