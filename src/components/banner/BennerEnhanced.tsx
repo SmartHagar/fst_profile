@@ -24,14 +24,14 @@ const BennerEnhanced: React.FC = () => {
 
   return (
     <div className="relative w-full">
-      <div className="relative h-32 lg:h-96 md:h-64 w-full overflow-hidden group">
+      <div className="relative h-32 lg:h-72 md:h-64 w-full overflow-hidden group">
         {/* Next.js Image Component dengan error handling */}
         {!imageLoadError ? (
           <Image
             src={bannerData.image}
             alt={bannerData.title}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            className="object-fill transition-transform duration-700 group-hover:scale-105"
             priority={true}
             quality={90}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
